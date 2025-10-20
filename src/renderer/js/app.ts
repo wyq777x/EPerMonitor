@@ -80,7 +80,22 @@ export class UIManager {
     // 更新详细信息
     this.updateElement('cpuCores', (data.cores || '-').toString());
     this.updateElement('cpuSpeed', data.speed ? `${data.speed} MHz` : '-');
-    this.updateElement('cpuModel', this.truncateText(data.model || '-', 25));
+    const modelEl = document.getElementById('cpuModel');
+    const rawModel = data.model ?? '';
+    const trimmedModel = rawModel.trim();
+    const hasModel = trimmedModel.length > 0;
+
+    if (modelEl) {
+      modelEl.textContent = hasModel ? trimmedModel : '-';
+
+      if (hasModel) {
+        modelEl.setAttribute('title', rawModel);
+        modelEl.classList.add('wrap-text');
+      } else {
+        modelEl.removeAttribute('title');
+        modelEl.classList.remove('wrap-text');
+      }
+    }
     this.updateElement(
         'cpuTemp', data.temperature ? `${data.temperature}°C` : '-');
   }
@@ -206,13 +221,6 @@ export class UIManager {
       el.textContent = value;
     }
   }
-
-  // 工具函数：截断文本
-  private truncateText(text: string, maxLength: number): string {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
-  }
-
   // 工具函数：格式化速度
   private formatSpeed(bytesPerSecond: number): string {
     return formatBytes(bytesPerSecond) + '/s';

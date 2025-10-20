@@ -346,6 +346,15 @@ body {
   color: var(--text-primary);
 }
 
+.wrap-text {
+  display: block;
+  max-width: 100%;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  cursor: help;
+}
+
 /* ==================== 底部栏 ==================== */
 .footer {
   position: relative;
