@@ -4,12 +4,12 @@
 
 ## 🌟 特性
 
-- 🎨 现代化渐变UI设计，配合毛玻璃效果
+- 🎨 现代化渐变 UI 设计，配合毛玻璃效果
 - 🚀 C++后端，高性能系统监控
 - 💪 TypeScript 类型安全，提升代码质量
-- 🔄 前后端通过IPC分离
-- 📊 实时监控CPU、内存、磁盘、网络
-- 🏗️ MVC架构，代码清晰易维护
+- 🔄 前后端通过 IPC 分离
+- 📊 实时监控 CPU、内存、磁盘、网络
+- 🏗️ MVC 架构，代码清晰易维护
 
 ## 📁 项目结构
 
@@ -48,7 +48,7 @@ epm_better/
 - **前端**: Electron, HTML5, CSS3, TypeScript
 - **后端**: Modern C++ (C++17), CMake
 - **通信**: Node.js N-API, IPC
-- **架构**: MVC模式
+- **架构**: MVC 模式
 - **类型系统**: TypeScript (严格模式)
 
 ## 🚀 快速开始
@@ -58,8 +58,8 @@ epm_better/
 - Node.js >= 18
 - TypeScript >= 5.3
 - CMake >= 3.15
-- GCC/Clang (支持 C++17)
-- Linux 开发环境
+- GCC/Clang/MSVC (支持 C++17 以上)
+- Linux/MacOS 开发环境(推荐), Windows 需安装适当的编译工具链
 
 ### 安装依赖
 

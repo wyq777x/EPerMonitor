@@ -59,7 +59,7 @@ namespace epm
                         disk.usagePercent = 0.0;
                     }
 
-                    disks.push_back(disk);
+                    disks.emplace_back(disk);
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace epm
                 disk.free = static_cast<unsigned long long>(totalNumberOfFreeBytes.QuadPart);
                 disk.used = disk.total >= disk.free ? disk.total - disk.free : 0;
                 disk.usagePercent = disk.total > 0 ? (static_cast<double>(disk.used) / disk.total) * 100.0 : 0.0;
-                disks.push_back(disk);
+                disks.emplace_back(disk);
             }
         }
 #elif defined(__APPLE__)
@@ -111,7 +111,7 @@ namespace epm
                 disk.free = static_cast<unsigned long long>(mounts[i].f_bavail) * mounts[i].f_bsize;
                 disk.used = disk.total >= disk.free ? disk.total - disk.free : 0;
                 disk.usagePercent = disk.total > 0 ? (static_cast<double>(disk.used) / disk.total) * 100.0 : 0.0;
-                disks.push_back(disk);
+                disks.emplace_back(disk);
             }
         }
 #endif

@@ -147,7 +147,7 @@ namespace epm
         // Convert map to vector
         for (const auto &pair : ifaceMap)
         {
-            interfaces.push_back(pair.second);
+            interfaces.emplace_back(pair.second);
         }
 #elif defined(_WIN32)
         WSADATA wsaData;
@@ -246,7 +246,7 @@ namespace epm
                 iface.rxSpeed = 0;
                 iface.txSpeed = 0;
 
-                interfaces.push_back(std::move(iface));
+                interfaces.emplace_back(std::move(iface));
             }
         }
 
@@ -319,7 +319,7 @@ namespace epm
 
         for (const auto &pair : ifaceMap)
         {
-            interfaces.push_back(pair.second);
+            interfaces.emplace_back(pair.second);
         }
 #endif
 

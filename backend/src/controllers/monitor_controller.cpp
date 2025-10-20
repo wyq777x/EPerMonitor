@@ -226,7 +226,7 @@ namespace epm
         proc.name = "epm-better";
         proc.cpu = 0.0;
         proc.memory = 0;
-        processes.push_back(proc);
+        processes.emplace_back(proc);
 
         Napi::Object result = Napi::Object::New(env);
         result.Set("processes", processListToArray(env, processes));
