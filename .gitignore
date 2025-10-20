@@ -1,0 +1,13 @@
+node_modules/
+dist/
+build/
+backend/build/
+release/
+*.log
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.user
