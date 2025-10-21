@@ -32,13 +32,14 @@ export class SystemMonitor {
           __dirname, '../../../backend/build/Release/system_monitor.node');
       if (fs.existsSync(addonPath)) {
         this.nativeMonitor = require(addonPath) as NativeMonitor;
-        console.log('✅ C++ 原生监控模块加载成功');
+        console.log('✅ Loading C++ native observing modules success');
       } else {
-        console.warn('⚠️ C++ 模块未找到，使用 Node.js 后备实现');
+        console.warn(
+            '⚠️ Did not find C++ modules，using Node.js backup implementation');
       }
     } catch (error) {
-      console.error('❌ C++ 模块加载失败:', (error as Error).message);
-      console.log('使用 Node.js 后备实现');
+      console.error('❌ Loading C++ modules failed:', (error as Error).message);
+      console.log('Using Node.js backup implementation');
     }
   }
 
@@ -202,7 +203,7 @@ export class SystemMonitor {
       callback(data);
     }, interval);
 
-    console.log(`✅ 开始监控，间隔: ${interval}ms`);
+    console.log(`✅ Start observing，Refreshing time: ${interval}ms`);
   }
 
   /**
@@ -213,7 +214,7 @@ export class SystemMonitor {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
       this.isMonitoring = false;
-      console.log('⏹️ 停止监控');
+      console.log('⏹️ Stop observing');
     }
   }
 
