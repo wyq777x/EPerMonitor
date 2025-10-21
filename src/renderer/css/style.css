@@ -162,6 +162,14 @@ body {
   gap: var(--spacing-sm);
 }
 
+.app-title .icon {
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  -webkit-text-fill-color: initial !important;
+  color: var(--text-primary);
+}
+
 .system-info {
   padding: var(--spacing-sm) var(--spacing-md);
   background: var(--glass-bg);
