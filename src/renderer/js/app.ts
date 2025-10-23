@@ -64,7 +64,7 @@ export class UIManager {
 
   // 更新CPU信息
   updateCPU(data: CPUInfo): void {
-    const usage = Math.round(data.usage || 0);
+    const usage = Math.round(data.usage ?? 0);
 
     // 更新进度环
     updateProgressRing('cpuCircle', 'cpuText', usage);
@@ -117,9 +117,9 @@ export class UIManager {
     }
 
     // 更新详细信息
-    this.updateElement('memTotal', formatBytes(data.total || 0));
-    this.updateElement('memUsed', formatBytes(data.used || 0));
-    this.updateElement('memFree', formatBytes(data.free || 0));
+    this.updateElement('memTotal', formatBytes(data.total ?? 0));
+    this.updateElement('memUsed', formatBytes(data.used ?? 0));
+    this.updateElement('memFree', formatBytes(data.free ?? 0));
     this.updateElement('memPercent', `${usage.toFixed(1)}%`);
   }
 
@@ -138,17 +138,17 @@ export class UIManager {
                                   (disk) => `
       <div class="disk-item fade-in">
         <div class="disk-header">
-          <span class="disk-name">${disk.name || '未知'}</span>
-          <span class="disk-usage">${disk.usagePercent || 0}%</span>
+          <span class="disk-name">${disk.name ?? '未知'}</span>
+          <span class="disk-usage">${disk.usagePercent ?? 0}%</span>
         </div>
         <div class="disk-progress">
           <div class="disk-progress-bar" style="width: ${
-                                      disk.usagePercent || 0}%"></div>
+                                      disk.usagePercent ?? 0}%"></div>
         </div>
         <div class="disk-info">
-          <span>已用: ${formatBytes(disk.used || 0)}</span>
-          <span>可用: ${formatBytes(disk.free || 0)}</span>
-          <span>总计: ${formatBytes(disk.total || 0)}</span>
+          <span>已用: ${formatBytes(disk.used ?? 0)}</span>
+          <span>可用: ${formatBytes(disk.free ?? 0)}</span>
+          <span>总计: ${formatBytes(disk.total ?? 0)}</span>
         </div>
       </div>
     `).join('');
@@ -168,21 +168,21 @@ export class UIManager {
                               .map((iface) => `
       <div class="network-item fade-in">
         <div class="network-header">
-          <span class="network-name">${iface.name || '未知'}</span>
-          <span class="network-ip">${iface.ip || '-'}</span>
+          <span class="network-name">${iface.name ?? '未知'}</span>
+          <span class="network-ip">${iface.ip ?? '-'}</span>
         </div>
         <div class="network-info">
           <div class="network-stat">
             <span class="label">↓ 下载:</span>
-            <span class="value">${this.formatSpeed(iface.rxSpeed || 0)}</span>
+            <span class="value">${this.formatSpeed(iface.rxSpeed ?? 0)}</span>
           </div>
           <div class="network-stat">
             <span class="label">↑ 上传:</span>
-            <span class="value">${this.formatSpeed(iface.txSpeed || 0)}</span>
+            <span class="value">${this.formatSpeed(iface.txSpeed ?? 0)}</span>
           </div>
           <div class="network-stat">
             <span class="label">MAC:</span>
-            <span class="value">${iface.mac || '-'}</span>
+            <span class="value">${iface.mac ?? '-'}</span>
           </div>
         </div>
       </div>
