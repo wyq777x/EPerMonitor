@@ -47,6 +47,38 @@
   
   /* 动画 */
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* 图表主题 */
+  --chart-padding: 40;
+  --chart-grid-color: rgba(255, 255, 255, 0.05);
+  --chart-grid-line-width: 1;
+  --chart-grid-horizontal-lines: 5;
+  --chart-grid-vertical-density: 10;
+  --chart-axis-color: rgba(255, 255, 255, 0.3);
+  --chart-axis-line-width: 2;
+  --chart-axis-label-color: rgba(255, 255, 255, 0.6);
+  --chart-axis-font: 12px "Segoe UI", sans-serif;
+  --chart-axis-y-label-x-offset: 10;
+  --chart-axis-y-label-y-offset: 4;
+  --chart-axis-x-label-y-offset: 20;
+  --chart-legend-font: 14px "Segoe UI", sans-serif;
+  --chart-legend-text-color: rgba(255, 255, 255, 0.9);
+  --chart-legend-right-offset: 150;
+  --chart-legend-top-offset: 10;
+  --chart-legend-box-width: 20;
+  --chart-legend-box-height: 10;
+  --chart-legend-label-spacing: 5;
+  --chart-legend-item-gap: 80;
+  --chart-series-cpu-line-color: rgba(102, 126, 234, 0.8);
+  --chart-series-cpu-fill-color: rgba(102, 126, 234, 0.2);
+  --chart-series-cpu-legend-color: rgba(102, 126, 234, 0.8);
+  --chart-series-cpu-label: CPU;
+  --chart-series-cpu-line-width: 2;
+  --chart-series-memory-line-color: rgba(79, 172, 254, 0.8);
+  --chart-series-memory-fill-color: rgba(79, 172, 254, 0.2);
+  --chart-series-memory-legend-color: rgba(79, 172, 254, 0.8);
+  --chart-series-memory-label: 内存;
+  --chart-series-memory-line-width: 2;
 }
 
 body {
