@@ -121,8 +121,15 @@ function setupIPC(): void {
 
   // 停止监控
   ipcMain.handle('stop-monitoring', async () => {
-    systemMonitor.stopMonitoring();
-    return {success: true};
+    try {
+      systemMonitor.stopMonitoring();
+      return {success: true};
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error)
+      };
+    }
   });
 }
 

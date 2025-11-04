@@ -1,6 +1,6 @@
 {
   "name": "epm-better",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "高性能系统监视器 - Electron + C++ + TypeScript",
   "main": "dist/main/main.js",
   "scripts": {
@@ -21,7 +21,7 @@
     "system",
     "typescript"
   ],
-  "author": "Your Name",
+  "author": "wyq777x/Wyatt Wong",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.10.0",
