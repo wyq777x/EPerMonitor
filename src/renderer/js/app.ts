@@ -2,15 +2,21 @@
  * 主应用逻辑 - View层
  */
 
-import type {CPUInfo, DiskData, MemoryInfo, NetworkData, SystemInfo} from '../../types/global';
+import type {
+  CPUInfo,
+  DiskData,
+  MemoryInfo,
+  NetworkData,
+  SystemInfo,
+} from "../../types/global";
 
 // 工具函数：格式化字节
 function formatBytes(bytes: number): string {
-  if (bytes === 0) return '0 B';
+  if (bytes === 0) return "0 B";
   const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const sizes = ["B", "KB", "MB", "GB", "TB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 }
 
 // 工具函数：格式化时间
@@ -26,7 +32,10 @@ function formatUptime(seconds: number): string {
 
 // 工具函数：更新进度环
 function updateProgressRing(
-    circleId: string, textId: string, percent: number): void {
+  circleId: string,
+  textId: string,
+  percent: number,
+): void {
   const circle = document.getElementById(circleId) as SVGCircleElement | null;
   const text = document.getElementById(textId);
 
@@ -41,11 +50,11 @@ function updateProgressRing(
 
   // 动态改变颜色
   if (percent < 50) {
-    circle.style.stroke = '#43e97b';
+    circle.style.stroke = "#43e97b";
   } else if (percent < 80) {
-    circle.style.stroke = '#fee140';
+    circle.style.stroke = "#fee140";
   } else {
-    circle.style.stroke = '#f5576c';
+    circle.style.stroke = "#f5576c";
   }
 }
 
@@ -55,10 +64,9 @@ export class UIManager {
 
   // 更新系统信息
   updateSystemInfo(info: SystemInfo): void {
-    const hostnameEl = document.getElementById('hostname');
+    const hostnameEl = document.getElementById("hostname");
     if (hostnameEl) {
-      hostnameEl.textContent =
-          `${info.hostname} | ${info.platform} ${info.arch}`;
+      hostnameEl.textContent = `${info.hostname} | ${info.platform} ${info.arch}`;
     }
   }
 
@@ -67,65 +75,67 @@ export class UIManager {
     const usage = Math.round(data.usage ?? 0);
 
     // 更新进度环
-    updateProgressRing('cpuCircle', 'cpuText', usage);
+    updateProgressRing("cpuCircle", "cpuText", usage);
 
     // 更新徽章
-    const badge = document.getElementById('cpuBadge');
+    const badge = document.getElementById("cpuBadge");
     if (badge) {
       badge.textContent = `${usage}%`;
       badge.style.background =
-          usage > 80 ? 'var(--gradient-2)' : 'var(--gradient-3)';
+        usage > 80 ? "var(--gradient-2)" : "var(--gradient-3)";
     }
 
     // 更新详细信息
-    this.updateElement('cpuCores', (data.cores || '-').toString());
-    this.updateElement('cpuSpeed', data.speed ? `${data.speed} MHz` : '-');
-    const modelEl = document.getElementById('cpuModel');
-    const rawModel = data.model ?? '';
+    this.updateElement("cpuCores", (data.cores || "-").toString());
+    this.updateElement("cpuSpeed", data.speed ? `${data.speed} MHz` : "-");
+    const modelEl = document.getElementById("cpuModel");
+    const rawModel = data.model ?? "";
     const trimmedModel = rawModel.trim();
     const hasModel = trimmedModel.length > 0;
 
     if (modelEl) {
-      modelEl.textContent = hasModel ? trimmedModel : '-';
+      modelEl.textContent = hasModel ? trimmedModel : "-";
 
       if (hasModel) {
-        modelEl.setAttribute('title', rawModel);
-        modelEl.classList.add('wrap-text');
+        modelEl.setAttribute("title", rawModel);
+        modelEl.classList.add("wrap-text");
       } else {
-        modelEl.removeAttribute('title');
-        modelEl.classList.remove('wrap-text');
+        modelEl.removeAttribute("title");
+        modelEl.classList.remove("wrap-text");
       }
     }
     this.updateElement(
-        'cpuTemp', data.temperature ? `${data.temperature}°C` : '-');
+      "cpuTemp",
+      data.temperature ? `${data.temperature}°C` : "-",
+    );
   }
 
   // 更新内存信息
   updateMemory(data: MemoryInfo): void {
-    const usage = parseFloat((data.usagePercent || 0).toString());
+    const usage = parseFloat((data.usagePercent ?? 0).toString());
     const usageRounded = Math.round(usage);
 
     // 更新进度环
-    updateProgressRing('memCircle', 'memText', usageRounded);
+    updateProgressRing("memCircle", "memText", usageRounded);
 
     // 更新徽章
-    const badge = document.getElementById('memBadge');
+    const badge = document.getElementById("memBadge");
     if (badge) {
       badge.textContent = `${usageRounded}%`;
       badge.style.background =
-          usage > 80 ? 'var(--gradient-2)' : 'var(--gradient-3)';
+        usage > 80 ? "var(--gradient-2)" : "var(--gradient-3)";
     }
 
     // 更新详细信息
-    this.updateElement('memTotal', formatBytes(data.total ?? 0));
-    this.updateElement('memUsed', formatBytes(data.used ?? 0));
-    this.updateElement('memFree', formatBytes(data.free ?? 0));
-    this.updateElement('memPercent', `${usage.toFixed(1)}%`);
+    this.updateElement("memTotal", formatBytes(data.total ?? 0));
+    this.updateElement("memUsed", formatBytes(data.used ?? 0));
+    this.updateElement("memFree", formatBytes(data.free ?? 0));
+    this.updateElement("memPercent", `${usage.toFixed(1)}%`);
   }
 
   // 更新磁盘信息
   updateDisk(data: DiskData): void {
-    const container = document.getElementById('diskList');
+    const container = document.getElementById("diskList");
     if (!container || !data.disks) return;
 
     if (data.disks.length === 0) {
@@ -133,30 +143,74 @@ export class UIManager {
       return;
     }
 
-    container.innerHTML = data.disks
-                              .map(
-                                  (disk) => `
-      <div class="disk-item fade-in">
+    const existingItems = container.querySelectorAll(".disk-item");
+
+    if (existingItems.length !== data.disks.length) {
+      this.rebuildDiskList(container, data.disks);
+    }
+
+    // Update each disk item incrementally
+    data.disks.forEach((disk, index) => {
+      const diskItem = existingItems[index] as HTMLElement | null;
+      if (!diskItem) return;
+
+      // update disk-name
+      const nameElement = diskItem.querySelector(".disk-name");
+      if (nameElement) {
+        nameElement.textContent = disk.name ?? "Unknown";
+      }
+
+      // update disk-usage percentage
+      const usageElement = diskItem.querySelector(".disk-usage");
+      const usagePercent = Math.round(disk.usagePercent ?? 0);
+      if (usageElement) {
+        usageElement.textContent = `${usagePercent}%`;
+      }
+
+      const progressBar = diskItem.querySelector(
+        ".disk-progress-bar",
+      ) as HTMLElement | null;
+      if (progressBar) {
+        progressBar.style.width = `${usagePercent}%`;
+      }
+    });
+  }
+
+  private rebuildDiskList(container: HTMLElement, disks: any[]): void {
+    container.innerHTML = disks
+      .map(
+        (disk) => ` <div class="disk-item">
         <div class="disk-header">
-          <span class="disk-name">${disk.name ?? '未知'}</span>
-          <span class="disk-usage">${disk.usagePercent ?? 0}%</span>
+          <span class="disk-name">${disk.name ?? "未知"}</span>
+          <span class="disk-usage">${Math.round(disk.usagePercent ?? 0)}%</span>
         </div>
         <div class="disk-progress">
-          <div class="disk-progress-bar" style="width: ${
-                                      disk.usagePercent ?? 0}%"></div>
+          <div class="disk-progress-bar" style="width: ${Math.round(disk.usagePercent ?? 0)}%"></div>
         </div>
         <div class="disk-info">
           <span>已用: ${formatBytes(disk.used ?? 0)}</span>
           <span>可用: ${formatBytes(disk.free ?? 0)}</span>
           <span>总计: ${formatBytes(disk.total ?? 0)}</span>
         </div>
-      </div>
-    `).join('');
+      </div>`,
+      )
+      .join("");
+
+    const items = container.querySelectorAll(".disk-item");
+    items.forEach((item, index) => {
+      item.classList.add("fade-in");
+      setTimeout(
+        () => {
+          item.classList.remove("fade-in");
+        },
+        300 + index * 50,
+      );
+    });
   }
 
   // 更新网络信息
   updateNetwork(data: NetworkData): void {
-    const container = document.getElementById('networkList');
+    const container = document.getElementById("networkList");
     if (!container || !data.interfaces) return;
 
     if (data.interfaces.length === 0) {
@@ -165,11 +219,12 @@ export class UIManager {
     }
 
     container.innerHTML = data.interfaces
-                              .map((iface) => `
+      .map(
+        (iface) => `
       <div class="network-item fade-in">
         <div class="network-header">
-          <span class="network-name">${iface.name ?? '未知'}</span>
-          <span class="network-ip">${iface.ip ?? '-'}</span>
+          <span class="network-name">${iface.name ?? "未知"}</span>
+          <span class="network-ip">${iface.ip ?? "-"}</span>
         </div>
         <div class="network-info">
           <div class="network-stat">
@@ -182,22 +237,24 @@ export class UIManager {
           </div>
           <div class="network-stat">
             <span class="label">MAC:</span>
-            <span class="value">${iface.mac ?? '-'}</span>
+            <span class="value">${iface.mac ?? "-"}</span>
           </div>
         </div>
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   // 更新状态
-  updateStatus(status: string, uptime: number|null): void {
-    const statusEl = document.getElementById('status');
+  updateStatus(status: string, uptime: number | null): void {
+    const statusEl = document.getElementById("status");
     if (statusEl) {
       statusEl.textContent = status;
     }
 
     if (uptime !== null) {
-      const uptimeEl = document.getElementById('uptime');
+      const uptimeEl = document.getElementById("uptime");
       if (uptimeEl) {
         uptimeEl.textContent = formatUptime(uptime);
       }
@@ -206,11 +263,11 @@ export class UIManager {
 
   // 显示错误
   showError(message: string): void {
-    console.error('❌', message);
-    const statusEl = document.getElementById('status');
+    console.error("❌", message);
+    const statusEl = document.getElementById("status");
     if (statusEl) {
       statusEl.textContent = `错误: ${message}`;
-      statusEl.style.color = 'var(--danger)';
+      statusEl.style.color = "var(--danger)";
     }
   }
 
@@ -223,7 +280,7 @@ export class UIManager {
   }
   // 工具函数：格式化速度
   private formatSpeed(bytesPerSecond: number): string {
-    return formatBytes(bytesPerSecond) + '/s';
+    return formatBytes(bytesPerSecond) + "/s";
   }
 }
 

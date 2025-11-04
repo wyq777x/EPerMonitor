@@ -4,15 +4,15 @@
  */
 const globalScope = globalThis as unknown as {
   exports?: Record<string, unknown>;
-  module?: {exports?: Record<string, unknown>}
+  module?: { exports?: Record<string, unknown> };
 };
 
-if (typeof globalScope.exports === 'undefined') {
+if (typeof globalScope.exports === "undefined") {
   globalScope.exports = {};
 }
 
-if (typeof globalScope.module === 'undefined') {
-  globalScope.module = {exports: globalScope.exports};
-} else if (typeof globalScope.module.exports === 'undefined') {
+if (typeof globalScope.module === "undefined") {
+  globalScope.module = { exports: globalScope.exports };
+} else if (typeof globalScope.module.exports === "undefined") {
   globalScope.module.exports = globalScope.exports;
 }

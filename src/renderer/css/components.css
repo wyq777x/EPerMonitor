@@ -93,7 +93,7 @@
 .network-ip {
   font-size: 12px;
   color: var(--text-muted);
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
 }
 
 .network-stats {
@@ -167,7 +167,7 @@
 
 .process-pid {
   color: var(--text-muted);
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
 }
 
 .process-name {
@@ -222,7 +222,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {

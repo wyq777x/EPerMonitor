@@ -1,8 +1,16 @@
-import * as fs from 'fs';
-import * as os from 'os';
-import * as path from 'path';
+import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
 
-import type {CPUInfo, DiskData, MemoryInfo, MonitoringData, NetworkData, ProcessInfo, SystemInfo} from '../../types/global';
+import type {
+  CPUInfo,
+  DiskData,
+  MemoryInfo,
+  MonitoringData,
+  NetworkData,
+  ProcessInfo,
+  SystemInfo,
+} from "../../types/global";
 
 interface NativeMonitor {
   getSystemInfo: () => SystemInfo;
@@ -11,7 +19,7 @@ interface NativeMonitor {
   getDiskInfo: () => DiskData;
   getNetworkInfo: () => NetworkData;
   getProcessList: () => {
-    processes: ProcessInfo[]
+    processes: ProcessInfo[];
   };
   cleanup?: () => void;
 }
@@ -22,24 +30,27 @@ interface NativeMonitor {
  */
 export class SystemMonitor {
   private isMonitoring: boolean = false;
-  private monitoringInterval: NodeJS.Timeout|null = null;
-  private nativeMonitor: NativeMonitor|null = null;
+  private monitoringInterval: NodeJS.Timeout | null = null;
+  private nativeMonitor: NativeMonitor | null = null;
 
   constructor() {
     // 尝试加载C++原生模块
     try {
       const addonPath = path.join(
-          __dirname, '../../../backend/build/Release/system_monitor.node');
+        __dirname,
+        "../../../backend/build/Release/system_monitor.node",
+      );
       if (fs.existsSync(addonPath)) {
         this.nativeMonitor = require(addonPath) as NativeMonitor;
-        console.log('✅ Loading C++ native observing modules success');
+        console.log("✅ Loading C++ native observing modules success");
       } else {
         console.warn(
-            '⚠️ Did not find C++ modules，using Node.js backup implementation');
+          "⚠️ Did not find C++ modules，using Node.js backup implementation",
+        );
       }
     } catch (error) {
-      console.error('❌ Loading C++ modules failed:', (error as Error).message);
-      console.log('Using Node.js backup implementation');
+      console.error("❌ Loading C++ modules failed:", (error as Error).message);
+      console.log("Using Node.js backup implementation");
     }
   }
 
@@ -57,10 +68,10 @@ export class SystemMonitor {
       platform: os.platform(),
       hostname: os.hostname(),
       arch: os.arch(),
-      cpuModel: cpus[0]?.model || 'Unknown',
+      cpuModel: cpus[0]?.model || "Unknown",
       cpuCores: cpus.length,
       totalMemory: os.totalmem(),
-      uptime: os.uptime()
+      uptime: os.uptime(),
     };
   }
 
@@ -89,9 +100,9 @@ export class SystemMonitor {
     return {
       usage,
       cores: cpus.length,
-      model: cpus[0]?.model || 'Unknown',
+      model: cpus[0]?.model || "Unknown",
       speed: cpus[0]?.speed || 0,
-      temperature: 0  // Node.js 无法获取温度
+      temperature: 0, // Node.js 无法获取温度
     };
   }
 
@@ -112,7 +123,7 @@ export class SystemMonitor {
       total,
       used,
       free,
-      usagePercent: parseFloat(((used / total) * 100).toFixed(2))
+      usagePercent: parseFloat(((used / total) * 100).toFixed(2)),
     };
   }
 
@@ -125,7 +136,9 @@ export class SystemMonitor {
     }
 
     // Node.js 后备实现（简化版）
-    return {disks: [{name: '/', total: 0, used: 0, free: 0, usagePercent: 0}]};
+    return {
+      disks: [{ name: "/", total: 0, used: 0, free: 0, usagePercent: 0 }],
+    };
   }
 
   /**
@@ -144,7 +157,7 @@ export class SystemMonitor {
       const iface = interfaces[name];
       if (!iface) continue;
 
-      const ipv4 = iface.find((i) => i.family === 'IPv4');
+      const ipv4 = iface.find((i) => i.family === "IPv4");
       if (ipv4 && !ipv4.internal) {
         networks.push({
           name,
@@ -153,38 +166,42 @@ export class SystemMonitor {
           rxBytes: 0,
           txBytes: 0,
           rxSpeed: 0,
-          txSpeed: 0
+          txSpeed: 0,
         });
       }
     }
 
-    return {interfaces: networks};
+    return { interfaces: networks };
   }
 
   /**
    * 获取进程列表
    */
-  getProcessList(): {processes: ProcessInfo[]} {
+  getProcessList(): { processes: ProcessInfo[] } {
     if (this.nativeMonitor) {
       return this.nativeMonitor.getProcessList();
     }
 
     // Node.js 后备实现
     return {
-      processes: [{
-        pid: process.pid,
-        name: 'electron',
-        cpu: 0,
-        memory: process.memoryUsage().heapUsed
-      }]
+      processes: [
+        {
+          pid: process.pid,
+          name: "electron",
+          cpu: 0,
+          memory: process.memoryUsage().heapUsed,
+        },
+      ],
     };
   }
 
   /**
    * 开始监控
    */
-  startMonitoring(interval: number, callback: (data: MonitoringData) => void):
-      void {
+  startMonitoring(
+    interval: number,
+    callback: (data: MonitoringData) => void,
+  ): void {
     if (this.isMonitoring) {
       return;
     }
@@ -197,7 +214,7 @@ export class SystemMonitor {
         cpu: this.getCPUInfo(),
         memory: this.getMemoryInfo(),
         disk: this.getDiskInfo(),
-        network: this.getNetworkInfo()
+        network: this.getNetworkInfo(),
       };
 
       callback(data);
@@ -214,7 +231,7 @@ export class SystemMonitor {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
       this.isMonitoring = false;
-      console.log('⏹️ Stop observing');
+      console.log("⏹️ Stop observing");
     }
   }
 

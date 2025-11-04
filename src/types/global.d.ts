@@ -75,8 +75,8 @@ export interface ElectronAPI {
   getDiskInfo: () => Promise<DiskData>;
   getNetworkInfo: () => Promise<NetworkData>;
   getProcessList: () => Promise<ProcessInfo[]>;
-  startMonitoring: (interval?: number) => Promise<{success: boolean}>;
-  stopMonitoring: () => Promise<{success: boolean}>;
+  startMonitoring: (interval?: number) => Promise<{ success: boolean }>;
+  stopMonitoring: () => Promise<{ success: boolean }>;
   onMonitoringData: (callback: (data: MonitoringData) => void) => void;
   removeMonitoringListener: () => void;
 }
@@ -84,7 +84,7 @@ export interface ElectronAPI {
 declare global {
   interface Window {
     electronAPI: ElectronAPI;
-    UIManager: typeof import('../renderer/js/app').UIManager;
-    ChartManager: typeof import('../renderer/js/chart').ChartManager;
+    UIManager: typeof import("../renderer/js/app").UIManager;
+    ChartManager: typeof import("../renderer/js/chart").ChartManager;
   }
 }

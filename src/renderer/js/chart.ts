@@ -8,8 +8,8 @@ interface ChartData {
   timestamps: string[];
 }
 
-const METRIC_SERIES_KEYS = ['cpu', 'memory'] as const;
-type MetricSeriesKey = typeof METRIC_SERIES_KEYS[number];
+const METRIC_SERIES_KEYS = ["cpu", "memory"] as const;
+type MetricSeriesKey = (typeof METRIC_SERIES_KEYS)[number];
 
 interface ChartSeriesStyle {
   lineColor: string;
@@ -48,7 +48,7 @@ interface ChartLegendTheme {
 }
 
 interface ChartTheme {
-  layout: {padding: number};
+  layout: { padding: number };
   grid: ChartGridTheme;
   axes: ChartAxisTheme;
   legend: ChartLegendTheme;
@@ -56,24 +56,24 @@ interface ChartTheme {
 }
 
 const DEFAULT_THEME: ChartTheme = {
-  layout: {padding: 40},
+  layout: { padding: 40 },
   grid: {
-    color: 'rgba(255, 255, 255, 0.05)',
+    color: "rgba(255, 255, 255, 0.05)",
     lineWidth: 1,
     horizontalLines: 5,
     verticalDensity: 10,
   },
   axes: {
-    color: 'rgba(255, 255, 255, 0.3)',
+    color: "rgba(255, 255, 255, 0.3)",
     lineWidth: 2,
-    labelColor: 'rgba(255, 255, 255, 0.6)',
+    labelColor: "rgba(255, 255, 255, 0.6)",
     font: '12px "Segoe UI", sans-serif',
     yLabelXOffset: 10,
     yLabelYOffset: 4,
     xLabelYOffset: 20,
   },
   legend: {
-    textColor: 'rgba(255, 255, 255, 0.9)',
+    textColor: "rgba(255, 255, 255, 0.9)",
     font: '14px "Segoe UI", sans-serif',
     rightOffset: 150,
     topOffset: 10,
@@ -84,51 +84,52 @@ const DEFAULT_THEME: ChartTheme = {
   },
   series: {
     cpu: {
-      lineColor: 'rgba(102, 126, 234, 0.8)',
-      fillColor: 'rgba(102, 126, 234, 0.2)',
-      legendColor: 'rgba(102, 126, 234, 0.8)',
-      label: 'CPU',
+      lineColor: "rgba(102, 126, 234, 0.8)",
+      fillColor: "rgba(102, 126, 234, 0.2)",
+      legendColor: "rgba(102, 126, 234, 0.8)",
+      label: "CPU",
       lineWidth: 2,
     },
     memory: {
-      lineColor: 'rgba(79, 172, 254, 0.8)',
-      fillColor: 'rgba(79, 172, 254, 0.2)',
-      legendColor: 'rgba(79, 172, 254, 0.8)',
-      label: '内存',
+      lineColor: "rgba(79, 172, 254, 0.8)",
+      fillColor: "rgba(79, 172, 254, 0.2)",
+      legendColor: "rgba(79, 172, 254, 0.8)",
+      label: "内存",
       lineWidth: 2,
     },
   },
 };
 
 const stripWrappingQuotes = (value: string): string =>
-    value.replace(/^['"]|['"]$/g, '');
+  value.replace(/^['"]|['"]$/g, "");
 
 const toNumber = (value: string, fallback: number): number => {
   const parsed = Number.parseFloat(value);
   return Number.isFinite(parsed) ? parsed : fallback;
 };
 
+// 修改Alpha通道 来调整颜色透明度
 const withAlpha = (color: string, alpha: number): string => {
   if (!Number.isFinite(alpha)) {
     return color;
   }
 
-  if (color.startsWith('rgba')) {
+  if (color.startsWith("rgba")) {
     return color.replace(/rgba\(([^)]+)\)/, (_, inner) => {
-      const parts = inner.split(',').map((part: string) => part.trim());
+      const parts = inner.split(",").map((part: string) => part.trim());
       if (parts.length === 4) {
         parts[3] = alpha.toString();
-        return `rgba(${parts.join(', ')})`;
+        return `rgba(${parts.join(", ")})`;
       }
       if (parts.length === 3) {
-        return `rgba(${parts.join(', ')}, ${alpha})`;
+        return `rgba(${parts.join(", ")}, ${alpha})`;
       }
       return color;
     });
   }
 
-  if (color.startsWith('rgb')) {
-    return color.replace('rgb', 'rgba').replace(')', `, ${alpha})`);
+  if (color.startsWith("rgb")) {
+    return color.replace("rgb", "rgba").replace(")", `, ${alpha})`);
   }
 
   return color;
@@ -139,15 +140,18 @@ const createChartTheme = (canvas: HTMLCanvasElement): ChartTheme => {
   const rootStyles = getComputedStyle(document.documentElement);
 
   const getCssVar = (name: string): string =>
-      elementStyles.getPropertyValue(name).trim() ||
-      rootStyles.getPropertyValue(name).trim();
+    elementStyles.getPropertyValue(name).trim() ||
+    rootStyles.getPropertyValue(name).trim();
 
-  const getString =
-      (name: string, fallback: string, stripQuotes = false): string => {
-        const value = getCssVar(name);
-        if (!value) return fallback;
-        return stripQuotes ? stripWrappingQuotes(value) : value;
-      };
+  const getString = (
+    name: string,
+    fallback: string,
+    stripQuotes = false,
+  ): string => {
+    const value = getCssVar(name);
+    if (!value) return fallback;
+    return stripQuotes ? stripWrappingQuotes(value) : value;
+  };
 
   const getNumber = (name: string, fallback: number): number => {
     const value = getCssVar(name);
@@ -157,63 +161,104 @@ const createChartTheme = (canvas: HTMLCanvasElement): ChartTheme => {
 
   const theme: ChartTheme = {
     layout: {
-      padding: getNumber('--chart-padding', DEFAULT_THEME.layout.padding),
+      padding: getNumber("--chart-padding", DEFAULT_THEME.layout.padding),
     },
     grid: {
-      color: getString('--chart-grid-color', DEFAULT_THEME.grid.color),
-      lineWidth:
-          getNumber('--chart-grid-line-width', DEFAULT_THEME.grid.lineWidth),
+      color: getString("--chart-grid-color", DEFAULT_THEME.grid.color),
+      lineWidth: getNumber(
+        "--chart-grid-line-width",
+        DEFAULT_THEME.grid.lineWidth,
+      ),
       horizontalLines: getNumber(
-          '--chart-grid-horizontal-lines', DEFAULT_THEME.grid.horizontalLines),
+        "--chart-grid-horizontal-lines",
+        DEFAULT_THEME.grid.horizontalLines,
+      ),
       verticalDensity: getNumber(
-          '--chart-grid-vertical-density', DEFAULT_THEME.grid.verticalDensity),
+        "--chart-grid-vertical-density",
+        DEFAULT_THEME.grid.verticalDensity,
+      ),
     },
     axes: {
-      color: getString('--chart-axis-color', DEFAULT_THEME.axes.color),
-      lineWidth:
-          getNumber('--chart-axis-line-width', DEFAULT_THEME.axes.lineWidth),
-      labelColor:
-          getString('--chart-axis-label-color', DEFAULT_THEME.axes.labelColor),
-      font: getString('--chart-axis-font', DEFAULT_THEME.axes.font),
+      color: getString("--chart-axis-color", DEFAULT_THEME.axes.color),
+      lineWidth: getNumber(
+        "--chart-axis-line-width",
+        DEFAULT_THEME.axes.lineWidth,
+      ),
+      labelColor: getString(
+        "--chart-axis-label-color",
+        DEFAULT_THEME.axes.labelColor,
+      ),
+      font: getString("--chart-axis-font", DEFAULT_THEME.axes.font),
       yLabelXOffset: getNumber(
-          '--chart-axis-y-label-x-offset', DEFAULT_THEME.axes.yLabelXOffset),
+        "--chart-axis-y-label-x-offset",
+        DEFAULT_THEME.axes.yLabelXOffset,
+      ),
       yLabelYOffset: getNumber(
-          '--chart-axis-y-label-y-offset', DEFAULT_THEME.axes.yLabelYOffset),
+        "--chart-axis-y-label-y-offset",
+        DEFAULT_THEME.axes.yLabelYOffset,
+      ),
       xLabelYOffset: getNumber(
-          '--chart-axis-x-label-y-offset', DEFAULT_THEME.axes.xLabelYOffset),
+        "--chart-axis-x-label-y-offset",
+        DEFAULT_THEME.axes.xLabelYOffset,
+      ),
     },
     legend: {
       textColor: getString(
-          '--chart-legend-text-color', DEFAULT_THEME.legend.textColor),
-      font: getString('--chart-legend-font', DEFAULT_THEME.legend.font),
+        "--chart-legend-text-color",
+        DEFAULT_THEME.legend.textColor,
+      ),
+      font: getString("--chart-legend-font", DEFAULT_THEME.legend.font),
       rightOffset: getNumber(
-          '--chart-legend-right-offset', DEFAULT_THEME.legend.rightOffset),
+        "--chart-legend-right-offset",
+        DEFAULT_THEME.legend.rightOffset,
+      ),
       topOffset: getNumber(
-          '--chart-legend-top-offset', DEFAULT_THEME.legend.topOffset),
-      boxWidth:
-          getNumber('--chart-legend-box-width', DEFAULT_THEME.legend.boxWidth),
+        "--chart-legend-top-offset",
+        DEFAULT_THEME.legend.topOffset,
+      ),
+      boxWidth: getNumber(
+        "--chart-legend-box-width",
+        DEFAULT_THEME.legend.boxWidth,
+      ),
       boxHeight: getNumber(
-          '--chart-legend-box-height', DEFAULT_THEME.legend.boxHeight),
+        "--chart-legend-box-height",
+        DEFAULT_THEME.legend.boxHeight,
+      ),
       labelSpacing: getNumber(
-          '--chart-legend-label-spacing', DEFAULT_THEME.legend.labelSpacing),
-      itemGap:
-          getNumber('--chart-legend-item-gap', DEFAULT_THEME.legend.itemGap),
+        "--chart-legend-label-spacing",
+        DEFAULT_THEME.legend.labelSpacing,
+      ),
+      itemGap: getNumber(
+        "--chart-legend-item-gap",
+        DEFAULT_THEME.legend.itemGap,
+      ),
     },
-    series: {...DEFAULT_THEME.series},
+    series: { ...DEFAULT_THEME.series },
   };
 
   for (const key of METRIC_SERIES_KEYS) {
     const defaults = DEFAULT_THEME.series[key];
-    const lineColor =
-        getString(`--chart-series-${key}-line-color`, defaults.lineColor);
-    const fillSource =
-        getString(`--chart-series-${key}-fill-color`, defaults.fillColor);
-    const legendColor =
-        getString(`--chart-series-${key}-legend-color`, defaults.legendColor);
+    const lineColor = getString(
+      `--chart-series-${key}-line-color`,
+      defaults.lineColor,
+    );
+    const fillSource = getString(
+      `--chart-series-${key}-fill-color`,
+      defaults.fillColor,
+    );
+    const legendColor = getString(
+      `--chart-series-${key}-legend-color`,
+      defaults.legendColor,
+    );
     const label = getString(
-        `--chart-series-${key}-label`, defaults.label, true /* stripQuotes */);
-    const lineWidth =
-        getNumber(`--chart-series-${key}-line-width`, defaults.lineWidth);
+      `--chart-series-${key}-label`,
+      defaults.label,
+      true /* stripQuotes */,
+    );
+    const lineWidth = getNumber(
+      `--chart-series-${key}-line-width`,
+      defaults.lineWidth,
+    );
 
     theme.series[key] = {
       lineColor,
@@ -232,7 +277,7 @@ export class ChartManager {
   private ctx: CanvasRenderingContext2D;
   private data: ChartData;
   private maxDataPoints: number;
-  private animationFrame: number|null;
+  private animationFrame: number | null;
   private width: number;
   private height: number;
   private padding: number;
@@ -241,20 +286,21 @@ export class ChartManager {
   private readonly themeRefreshInterval: number;
 
   constructor(canvasId: string) {
-    const canvas =
-        document.getElementById(canvasId) as HTMLCanvasElement | null;
+    const canvas = document.getElementById(
+      canvasId,
+    ) as HTMLCanvasElement | null;
     if (!canvas) {
       throw new Error(`Canvas not found: ${canvasId}`);
     }
 
     this.canvas = canvas;
-    const ctx = this.canvas.getContext('2d');
+    const ctx = this.canvas.getContext("2d");
     if (!ctx) {
-      throw new Error('Failed to get canvas context');
+      throw new Error("Failed to get canvas context");
     }
 
     this.ctx = ctx;
-    this.data = {cpu: [], memory: [], timestamps: []};
+    this.data = { cpu: [], memory: [], timestamps: [] };
     this.maxDataPoints = 60;
     this.animationFrame = null;
     this.width = 0;
@@ -284,9 +330,10 @@ export class ChartManager {
 
   addData(cpu: number, memory: number): void {
     const now = new Date();
-    const time = `${now.getHours().toString().padStart(2, '0')}:${
-        now.getMinutes().toString().padStart(
-            2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+    const time = `${now.getHours().toString().padStart(2, "0")}:${now
+      .getMinutes()
+      .toString()
+      .padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`;
 
     this.data.cpu.push(cpu);
     this.data.memory.push(memory);
@@ -352,7 +399,7 @@ export class ChartManager {
   }
 
   private drawGrid(): void {
-    const {grid} = this.theme;
+    const { grid } = this.theme;
     this.ctx.strokeStyle = grid.color;
     this.ctx.lineWidth = grid.lineWidth;
 
@@ -370,8 +417,10 @@ export class ChartManager {
     }
 
     const verticalDensity = Math.max(1, Math.round(grid.verticalDensity));
-    const step =
-        Math.max(1, Math.floor(this.data.cpu.length / verticalDensity));
+    const step = Math.max(
+      1,
+      Math.floor(this.data.cpu.length / verticalDensity),
+    );
 
     for (let i = 0; i < this.data.cpu.length; i += step) {
       if (this.data.cpu.length < 2) break;
@@ -391,11 +440,17 @@ export class ChartManager {
     const chartWidth = this.width - 2 * padding;
     const chartHeight = this.height - 2 * padding;
 
-    const gradient =
-        this.ctx.createLinearGradient(0, padding, 0, this.height - padding);
+    const gradient = this.ctx.createLinearGradient(
+      0,
+      padding,
+      0,
+      this.height - padding,
+    );
     gradient.addColorStop(0, series.lineColor);
     gradient.addColorStop(
-        1, series.fillColor || withAlpha(series.lineColor, 0.2));
+      1,
+      series.fillColor || withAlpha(series.lineColor, 0.2),
+    );
 
     this.ctx.beginPath();
     this.ctx.moveTo(padding, this.height - padding);
@@ -428,7 +483,7 @@ export class ChartManager {
   }
 
   private drawAxes(): void {
-    const {axes, grid} = this.theme;
+    const { axes, grid } = this.theme;
     const padding = this.padding;
 
     this.ctx.strokeStyle = axes.color;
@@ -446,39 +501,43 @@ export class ChartManager {
 
     this.ctx.fillStyle = axes.labelColor;
     this.ctx.font = axes.font;
-    this.ctx.textAlign = 'right';
+    this.ctx.textAlign = "right";
 
     const segments = Math.max(1, Math.round(grid.horizontalLines));
     for (let i = 0; i <= segments; i++) {
       const y = padding + ((this.height - 2 * padding) * i) / segments;
       const value = 100 - (i * 100) / segments;
       this.ctx.fillText(
-          `${Math.round(value)}%`, padding - axes.yLabelXOffset,
-          y + axes.yLabelYOffset);
+        `${Math.round(value)}%`,
+        padding - axes.yLabelXOffset,
+        y + axes.yLabelYOffset,
+      );
     }
 
-    this.ctx.textAlign = 'center';
+    this.ctx.textAlign = "center";
     const step = Math.max(1, Math.floor(this.data.timestamps.length / 6));
     for (let i = 0; i < this.data.timestamps.length; i += step) {
       const count = this.data.timestamps.length - 1;
       if (count <= 0) break;
       const x = padding + ((this.width - 2 * padding) * i) / count;
       this.ctx.fillText(
-          this.data.timestamps[i] || '', x,
-          this.height - padding + axes.xLabelYOffset);
+        this.data.timestamps[i] || "",
+        x,
+        this.height - padding + axes.xLabelYOffset,
+      );
     }
   }
 
   private drawLegend(): void {
-    const {legend} = this.theme;
+    const { legend } = this.theme;
     const padding = this.padding;
     let currentX = this.width - padding - legend.rightOffset;
     const baseY = padding + legend.topOffset;
 
     const previousBaseline = this.ctx.textBaseline;
     this.ctx.font = legend.font;
-    this.ctx.textAlign = 'left';
-    this.ctx.textBaseline = 'middle';
+    this.ctx.textAlign = "left";
+    this.ctx.textBaseline = "middle";
     this.ctx.fillStyle = legend.textColor;
 
     for (const key of METRIC_SERIES_KEYS) {
@@ -488,8 +547,10 @@ export class ChartManager {
 
       this.ctx.fillStyle = legend.textColor;
       this.ctx.fillText(
-          series.label, currentX + legend.boxWidth + legend.labelSpacing,
-          baseY + legend.boxHeight / 2);
+        series.label,
+        currentX + legend.boxWidth + legend.labelSpacing,
+        baseY + legend.boxHeight / 2,
+      );
 
       currentX += legend.boxWidth + legend.labelSpacing + legend.itemGap;
     }
