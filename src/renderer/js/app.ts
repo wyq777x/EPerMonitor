@@ -185,7 +185,9 @@ export class UIManager {
           <span class="disk-usage">${Math.round(disk.usagePercent ?? 0)}%</span>
         </div>
         <div class="disk-progress">
-          <div class="disk-progress-bar" style="width: ${Math.round(disk.usagePercent ?? 0)}%"></div>
+          <div class="disk-progress-bar" style="width: ${Math.round(
+            disk.usagePercent ?? 0,
+          )}%"></div>
         </div>
         <div class="disk-info">
           <span>已用: ${formatBytes(disk.used ?? 0)}</span>
@@ -218,10 +220,61 @@ export class UIManager {
       return;
     }
 
-    container.innerHTML = data.interfaces
+    const existingItems = container.querySelectorAll(".network-item");
+
+    if (existingItems.length !== data.interfaces.length) {
+      this.rebuildNetworkList(container, data.interfaces);
+      return;
+    }
+
+    // Update each network item incrementally
+    data.interfaces.forEach((iface, index) => {
+      const networkItem = existingItems[index] as HTMLElement | null;
+      if (!networkItem) return;
+
+      // update network-name
+      const nameElement = networkItem.querySelector(".network-name");
+      if (nameElement) {
+        nameElement.textContent = iface.name ?? "未知";
+      }
+
+      // update network-ip
+      const ipElement = networkItem.querySelector(".network-ip");
+      if (ipElement) {
+        ipElement.textContent = iface.ip ?? "-";
+      }
+
+      // update download speed
+      const downloadValue = networkItem
+        .querySelectorAll(".network-stat")[0]
+        ?.querySelector(".value");
+      if (downloadValue) {
+        downloadValue.textContent = this.formatSpeed(iface.rxSpeed ?? 0);
+      }
+
+      // update upload speed
+      const uploadValue = networkItem
+        .querySelectorAll(".network-stat")[1]
+        ?.querySelector(".value");
+      if (uploadValue) {
+        uploadValue.textContent = this.formatSpeed(iface.txSpeed ?? 0);
+      }
+
+      // update MAC address
+      const macValue = networkItem
+        .querySelectorAll(".network-stat")[2]
+        ?.querySelector(".value");
+      if (macValue) {
+        macValue.textContent = iface.mac ?? "-";
+      }
+    });
+  }
+
+  private rebuildNetworkList(container: HTMLElement, interfaces: any[]): void {
+    container.innerHTML = interfaces
       .map(
         (iface) => `
-      <div class="network-item fade-in">
+      <div class="network-item">
         <div class="network-header">
           <span class="network-name">${iface.name ?? "未知"}</span>
           <span class="network-ip">${iface.ip ?? "-"}</span>
@@ -244,6 +297,17 @@ export class UIManager {
     `,
       )
       .join("");
+
+    const items = container.querySelectorAll(".network-item");
+    items.forEach((item, index) => {
+      item.classList.add("fade-in");
+      setTimeout(
+        () => {
+          item.classList.remove("fade-in");
+        },
+        300 + index * 50,
+      );
+    });
   }
 
   // 更新状态

@@ -139,6 +139,7 @@ npm run build
 ### 严格模式
 
 项目启用了 TypeScript 严格模式，包括：
+
 - `strict: true`
 - `noImplicitAny: true`
 - `strictNullChecks: true`
@@ -150,16 +151,19 @@ npm run build
 ### View 层 (前端)
 
 #### 1. UI Manager (`app.js`)
+
 - 负责更新所有UI元素
 - 格式化数据显示
 - 处理进度环动画
 
 #### 2. Chart Manager (`chart.js`)
+
 - 绘制实时监控图表
 - Canvas 渲染
 - 数据点管理
 
 #### 3. App Controller (`controller.js`)
+
 - 协调 View 和 Model
 - 处理用户交互
 - 管理监控状态
@@ -167,11 +171,13 @@ npm run build
 ### Controller 层
 
 #### 1. Electron IPC (`systemMonitor.js`)
+
 - 加载 C++ 原生模块
 - 提供 Node.js 后备实现
 - 管理监控定时器
 
 #### 2. C++ Controller (`MonitorController.cpp`)
+
 - 统一的数据获取接口
 - 数据格式转换 (C++ ↔ JavaScript)
 - 错误处理
@@ -179,19 +185,23 @@ npm run build
 ### Model 层 (C++ 后端)
 
 #### 1. CPU Monitor
+
 - 读取 `/proc/stat` 计算 CPU 使用率
 - 获取 CPU 温度、频率、型号
 - 多核心支持
 
 #### 2. Memory Monitor
+
 - 使用 `sysinfo` 获取内存信息
 - 计算使用率
 
 #### 3. Disk Monitor
+
 - 遍历挂载点
 - 使用 `statvfs` 获取磁盘状态
 
 #### 4. Network Monitor
+
 - 读取网络接口信息
 - 统计网络流量
 
@@ -274,17 +284,21 @@ make VERBOSE=1
 ## 常见问题
 
 ### Q: C++ 模块加载失败
+
 A: 检查是否已运行 `npm run build:cpp`，确保 `backend/build/Release/system_monitor.node` 存在
 
 ### Q: 监控数据不更新
+
 A: 检查监控是否已启动，查看 Console 是否有错误信息
 
 ### Q: UI 显示异常
+
 A: 清除浏览器缓存，重启应用
 
 ## 扩展功能
 
 可以添加的功能：
+
 - [ ] 历史数据记录
 - [ ] 性能警报
 - [ ] 进程管理
