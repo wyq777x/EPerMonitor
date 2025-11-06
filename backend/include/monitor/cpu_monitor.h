@@ -5,8 +5,8 @@
 namespace epm
 {
 
-  class CPUMonitor
-  {
+class CPUMonitor
+{
   public:
     static CPUInfo getCPUInfo();
 
@@ -16,6 +16,6 @@ namespace epm
     static std::string getCPUModel();
     static int getCPUCores();
     static int getCPUSpeed();
-  };
+};
 
 } // namespace epm

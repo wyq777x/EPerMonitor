@@ -3,6 +3,6 @@
 
 namespace epm
 {
-    static_assert(std::is_same_v<decltype(CPUInfo{}.modelName), std::string>, "CPUInfo::modelName should exist");
+static_assert(std::is_same_v<decltype(CPUInfo{}.modelName), std::string>, "CPUInfo::modelName should exist");
 
 } // namespace epm

@@ -7,8 +7,8 @@
 namespace epm
 {
 
-  class MonitorController
-  {
+class MonitorController
+{
   public:
     static Napi::Object GetSystemInfo(const Napi::CallbackInfo &info);
 
@@ -29,6 +29,6 @@ namespace epm
     static Napi::Array networkInfoToArray(Napi::Env env, const std::vector<NetworkInterface> &interfaces);
     static Napi::Array processListToArray(Napi::Env env, const std::vector<ProcessInfo> &processes);
     static Napi::Object systemInfoToObject(Napi::Env env, const SystemInfo &info);
-  };
+};
 
 } // namespace epm

@@ -5,10 +5,10 @@
 namespace epm
 {
 
-  class MemoryMonitor
-  {
+class MemoryMonitor
+{
   public:
     static MemoryInfo getMemoryInfo();
-  };
+};
 
 } // namespace epm

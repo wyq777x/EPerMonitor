@@ -6,10 +6,10 @@
 namespace epm
 {
 
-  class DiskMonitor
-  {
+class DiskMonitor
+{
   public:
     static std::vector<DiskInfo> getDiskInfo();
-  };
+};
 
 } // namespace epm

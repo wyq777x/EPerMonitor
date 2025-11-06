@@ -6,10 +6,10 @@
 namespace epm
 {
 
-  class NetworkMonitor
-  {
+class NetworkMonitor
+{
   public:
     static std::vector<NetworkInterface> getNetworkInfo();
-  };
+};
 
 } // namespace epm
