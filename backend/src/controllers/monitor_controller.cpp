@@ -37,14 +37,16 @@ Napi::Object MonitorController::GetSystemInfo(const Napi::CallbackInfo &info)
 #if defined(__linux__)
     sysInfo.platform = "linux";
 
-    char hostname[256];
-    if (gethostname(hostname, sizeof(hostname)) == 0)
     {
-        sysInfo.hostname = hostname;
-    }
-    else
-    {
-        sysInfo.hostname = "unknown";
+        std::array<char, 256> buffer;
+        if (gethostname(buffer.data(), buffer.size()) == 0)
+        {
+            sysInfo.hostname = std::string(buffer.data());
+        }
+        else
+        {
+            sysInfo.hostname = "unknown";
+        }
     }
 
 #if defined(__x86_64__) || defined(_M_X64)
@@ -78,15 +80,17 @@ Napi::Object MonitorController::GetSystemInfo(const Napi::CallbackInfo &info)
 #elif defined(_WIN32)
     sysInfo.platform = "windows";
 
-    char computerName[MAX_COMPUTERNAME_LENGTH + 1];
-    DWORD size = static_cast<DWORD>(sizeof(computerName));
-    if (GetComputerNameA(computerName, &size))
     {
-        sysInfo.hostname = computerName;
-    }
-    else
-    {
-        sysInfo.hostname = "unknown";
+        std::array<char, MAX_COMPUTERNAME_LENGTH + 1> buffer;
+        DWORD size = static_cast<DWORD>(buffer.size());
+        if (GetComputerNameA(buffer.data(), &size))
+        {
+            sysInfo.hostname = std::string(buffer.data());
+        }
+        else
+        {
+            sysInfo.hostname = "unknown";
+        }
     }
 
     SYSTEM_INFO systemInfo;
@@ -119,14 +123,16 @@ Napi::Object MonitorController::GetSystemInfo(const Napi::CallbackInfo &info)
 #elif defined(__APPLE__)
     sysInfo.platform = "macos";
 
-    char hostname[256];
-    if (gethostname(hostname, sizeof(hostname)) == 0)
     {
-        sysInfo.hostname = hostname;
-    }
-    else
-    {
-        sysInfo.hostname = "unknown";
+        std::array<char, 256> buffer;
+        if (gethostname(buffer.data(), buffer.size()) == 0)
+        {
+            sysInfo.hostname = std::string(buffer.data());
+        }
+        else
+        {
+            sysInfo.hostname = "unknown";
+        }
     }
 
     struct utsname uts;
