@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/wyq777x/EPerMonitor/compare/v1.3.0...v1.4.0) (2025-11-17)
+
+
+### Features
+
+* add process list display and monitoring functionality ([027efb1](https://github.com/wyq777x/EPerMonitor/commit/027efb157caf8b48dc13f6355e851bd8dcde992a))
+
 ### [1.3.1](https://github.com/wyq777x/EPerMonitor/compare/v1.3.0...v1.3.1) (2025-11-17)
 
 ## 1.3.0 (2025-11-17)
