@@ -10,6 +10,7 @@
         "src/monitor/memory_monitor.cpp",
         "src/monitor/disk_monitor.cpp",
         "src/monitor/network_monitor.cpp",
+        "src/monitor/process_monitor.cpp",
         "src/models/system_info.cpp",
         "src/controllers/monitor_controller.cpp"
       ],

@@ -3,6 +3,7 @@
 #include "monitor/disk_monitor.h"
 #include "monitor/memory_monitor.h"
 #include "monitor/network_monitor.h"
+#include "monitor/process_monitor.h"
 #include <array>
 #include <ctime>
 #include <fstream>
@@ -224,18 +225,7 @@ namespace epm
     Napi::Object MonitorController::GetProcessList(const Napi::CallbackInfo &info)
     {
         Napi::Env env = info.Env();
-        std::vector<ProcessInfo> processes;
-
-        ProcessInfo proc;
-#ifdef _WIN32
-        proc.pid = _getpid();
-#else
-        proc.pid = getpid();
-#endif
-        proc.name = "epm-better";
-        proc.cpu = 0.0;
-        proc.memory = 0;
-        processes.emplace_back(proc);
+        std::vector<ProcessInfo> processes = ProcessMonitor::getProcessList();
 
         Napi::Object result = Napi::Object::New(env);
         result.Set("processes", processListToArray(env, processes));
