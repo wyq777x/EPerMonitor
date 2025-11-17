@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/wyq777x/EPerMonitor/compare/v1.3.0...v1.5.0) (2025-11-17)
+
+
+### Features
+
+* add process list display and monitoring functionality ([027efb1](https://github.com/wyq777x/EPerMonitor/commit/027efb157caf8b48dc13f6355e851bd8dcde992a))
+
+
+### Bug Fixes
+
+* disability of CPU/Memory  usage percentage of process list ([0a3ae3d](https://github.com/wyq777x/EPerMonitor/commit/0a3ae3d8bf6763269b3420924ec14e4aece63b32))
+
 ## [1.4.0](https://github.com/wyq777x/EPerMonitor/compare/v1.3.0...v1.4.0) (2025-11-17)
 
 
