@@ -1,6 +1,6 @@
 {
   "name": "epm-better",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "高性能系统监视器 - Electron + C++ + TypeScript",
   "main": "dist/main/main.js",
   "scripts": {
@@ -58,5 +58,6 @@
       ],
       "category": "Utility"
     }
-  }
+  },
+  "__npminstall_done": false
 }
