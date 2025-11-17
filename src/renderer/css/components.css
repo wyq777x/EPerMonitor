@@ -147,6 +147,18 @@
   overflow-y: auto;
 }
 
+.process-list-header {
+  display: grid;
+  grid-template-columns: 60px 1fr 80px 100px;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
 .process-item {
   display: grid;
   grid-template-columns: 60px 1fr 80px 100px;

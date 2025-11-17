@@ -1,227 +1,223 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'"
-    />
-    <title>EPM Better - 性能监视器</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/components.css" />
-  </head>
-  <body>
-    <div class="app-container">
-      <!-- 背景动画 -->
-      <div class="animated-background">
-        <div class="gradient-orb orb-1"></div>
-        <div class="gradient-orb orb-2"></div>
-        <div class="gradient-orb orb-3"></div>
-      </div>
 
-      <!-- 顶部栏 -->
-      <header class="header">
-        <div class="header-content">
-          <div class="header-left">
-            <h1 class="app-title">
-              <span class="icon">📊</span>
-              EPM Better
-            </h1>
-            <div class="system-info" id="systemInfo">
-              <span id="hostname">加载中...</span>
-            </div>
-          </div>
-          <div class="header-right">
-            <button class="btn btn-primary" id="startBtn">
-              <span class="icon">▶️</span>
-              开始监控
-            </button>
-            <button
-              class="btn btn-secondary"
-              id="stopBtn"
-              style="display: none"
-            >
-              <span class="icon">⏸️</span>
-              停止监控
-            </button>
-          </div>
-        </div>
-      </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+  <title>EPM Better - 性能监视器</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
 
-      <!-- 主内容区 -->
-      <main class="main-content">
-        <!-- CPU 监控卡片 -->
-        <div class="card glass-card">
-          <div class="card-header">
-            <h2 class="card-title">
-              <span class="icon">🖥️</span>
-              CPU 使用率
-            </h2>
-            <div class="card-actions">
-              <span class="badge" id="cpuBadge">0%</span>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="progress-ring" id="cpuRing">
-              <svg width="120" height="120">
-                <circle
-                  class="progress-ring-circle-bg"
-                  cx="60"
-                  cy="60"
-                  r="52"
-                />
-                <circle
-                  class="progress-ring-circle"
-                  cx="60"
-                  cy="60"
-                  r="52"
-                  id="cpuCircle"
-                />
-                <text x="60" y="60" class="progress-text" id="cpuText">0%</text>
-              </svg>
-            </div>
-            <div class="info-grid">
-              <div class="info-item">
-                <span class="info-label">核心数</span>
-                <span class="info-value" id="cpuCores">-</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">频率</span>
-                <span class="info-value" id="cpuSpeed">-</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">型号</span>
-                <span class="info-value" id="cpuModel">-</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">温度</span>
-                <span class="info-value" id="cpuTemp">-</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 内存监控卡片 -->
-        <div class="card glass-card">
-          <div class="card-header">
-            <h2 class="card-title">
-              <span class="icon">💾</span>
-              内存使用
-            </h2>
-            <div class="card-actions">
-              <span class="badge" id="memBadge">0%</span>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="progress-ring" id="memRing">
-              <svg width="120" height="120">
-                <circle
-                  class="progress-ring-circle-bg"
-                  cx="60"
-                  cy="60"
-                  r="52"
-                />
-                <circle
-                  class="progress-ring-circle"
-                  cx="60"
-                  cy="60"
-                  r="52"
-                  id="memCircle"
-                />
-                <text x="60" y="60" class="progress-text" id="memText">0%</text>
-              </svg>
-            </div>
-            <div class="info-grid">
-              <div class="info-item">
-                <span class="info-label">总计</span>
-                <span class="info-value" id="memTotal">-</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">已用</span>
-                <span class="info-value" id="memUsed">-</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">可用</span>
-                <span class="info-value" id="memFree">-</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">使用率</span>
-                <span class="info-value" id="memPercent">-</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 磁盘监控卡片 -->
-        <div class="card glass-card">
-          <div class="card-header">
-            <h2 class="card-title">
-              <span class="icon">💿</span>
-              磁盘状态
-            </h2>
-          </div>
-          <div class="card-body">
-            <div id="diskList" class="disk-list">
-              <div class="loading">加载中...</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 网络监控卡片 -->
-        <div class="card glass-card">
-          <div class="card-header">
-            <h2 class="card-title">
-              <span class="icon">🌐</span>
-              网络流量
-            </h2>
-          </div>
-          <div class="card-body">
-            <div id="networkList" class="network-list">
-              <div class="loading">加载中...</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 实时图表卡片 -->
-        <div class="card glass-card full-width">
-          <div class="card-header">
-            <h2 class="card-title">
-              <span class="icon">📈</span>
-              实时监控图表
-            </h2>
-          </div>
-          <div class="card-body">
-            <div class="chart-container">
-              <canvas id="monitorChart" width="800" height="300"></canvas>
-            </div>
-          </div>
-        </div>
-      </main>
-
-      <!-- 底部状态栏 -->
-      <footer class="footer">
-        <div class="footer-content">
-          <span class="footer-item">
-            <span class="icon">⏱️</span>
-            运行时间: <span id="uptime">-</span>
-          </span>
-          <span class="footer-item">
-            <span class="icon">🔄</span>
-            更新间隔: <span id="interval">1000ms</span>
-          </span>
-          <span class="footer-item">
-            <span class="icon">📡</span>
-            状态: <span id="status">就绪</span>
-          </span>
-        </div>
-      </footer>
+<body>
+  <div class="app-container">
+    <!-- 背景动画 -->
+    <div class="animated-background">
+      <div class="gradient-orb orb-1"></div>
+      <div class="gradient-orb orb-2"></div>
+      <div class="gradient-orb orb-3"></div>
     </div>
 
-    <!-- 使用编译后的 JavaScript 文件 -->
-    <script src="../../dist/renderer/js/cjs-shim.js"></script>
-    <script src="../../dist/renderer/js/app.js"></script>
-    <script src="../../dist/renderer/js/chart.js"></script>
-    <script src="../../dist/renderer/js/controller.js"></script>
-  </body>
+    <!-- 顶部栏 -->
+    <header class="header">
+      <div class="header-content">
+        <div class="header-left">
+          <h1 class="app-title">
+            <span class="icon">📊</span>
+            EPM Better
+          </h1>
+          <div class="system-info" id="systemInfo">
+            <span id="hostname">加载中...</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="btn btn-primary" id="startBtn">
+            <span class="icon">▶️</span>
+            开始监控
+          </button>
+          <button class="btn btn-secondary" id="stopBtn" style="display: none">
+            <span class="icon">⏸️</span>
+            停止监控
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- CPU 监控卡片 -->
+      <div class="card glass-card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <span class="icon">🖥️</span>
+            CPU 使用率
+          </h2>
+          <div class="card-actions">
+            <span class="badge" id="cpuBadge">0%</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="progress-ring" id="cpuRing">
+            <svg width="120" height="120">
+              <circle class="progress-ring-circle-bg" cx="60" cy="60" r="52" />
+              <circle class="progress-ring-circle" cx="60" cy="60" r="52" id="cpuCircle" />
+              <text x="60" y="60" class="progress-text" id="cpuText">0%</text>
+            </svg>
+          </div>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">核心数</span>
+              <span class="info-value" id="cpuCores">-</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">频率</span>
+              <span class="info-value" id="cpuSpeed">-</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">型号</span>
+              <span class="info-value" id="cpuModel">-</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">温度</span>
+              <span class="info-value" id="cpuTemp">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 内存监控卡片 -->
+      <div class="card glass-card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <span class="icon">💾</span>
+            内存使用
+          </h2>
+          <div class="card-actions">
+            <span class="badge" id="memBadge">0%</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="progress-ring" id="memRing">
+            <svg width="120" height="120">
+              <circle class="progress-ring-circle-bg" cx="60" cy="60" r="52" />
+              <circle class="progress-ring-circle" cx="60" cy="60" r="52" id="memCircle" />
+              <text x="60" y="60" class="progress-text" id="memText">0%</text>
+            </svg>
+          </div>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">总计</span>
+              <span class="info-value" id="memTotal">-</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">已用</span>
+              <span class="info-value" id="memUsed">-</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">可用</span>
+              <span class="info-value" id="memFree">-</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">使用率</span>
+              <span class="info-value" id="memPercent">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 磁盘监控卡片 -->
+      <div class="card glass-card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <span class="icon">💿</span>
+            磁盘状态
+          </h2>
+        </div>
+        <div class="card-body">
+          <div id="diskList" class="disk-list">
+            <div class="loading">加载中...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 网络监控卡片 -->
+      <div class="card glass-card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <span class="icon">🌐</span>
+            网络流量
+          </h2>
+        </div>
+        <div class="card-body">
+          <div id="networkList" class="network-list">
+            <div class="loading">加载中...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 进程列表卡片 -->
+      <div class="card glass-card full-width">
+        <div class="card-header">
+          <h2 class="card-title">
+            <span class="icon">🧩</span>
+            进程列表
+          </h2>
+        </div>
+        <div class="card-body">
+          <div class="process-list-header">
+            <span>PID</span>
+            <span>进程名</span>
+            <span>CPU</span>
+            <span>内存</span>
+          </div>
+          <div id="processList" class="process-list">
+            <div class="loading">加载中...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 实时图表卡片 -->
+      <div class="card glass-card full-width">
+        <div class="card-header">
+          <h2 class="card-title">
+            <span class="icon">📈</span>
+            实时监控图表
+          </h2>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="monitorChart" width="800" height="300"></canvas>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 底部状态栏 -->
+    <footer class="footer">
+      <div class="footer-content">
+        <span class="footer-item">
+          <span class="icon">⏱️</span>
+          运行时间: <span id="uptime">-</span>
+        </span>
+        <span class="footer-item">
+          <span class="icon">🔄</span>
+          更新间隔: <span id="interval">1000ms</span>
+        </span>
+        <span class="footer-item">
+          <span class="icon">📡</span>
+          状态: <span id="status">就绪</span>
+        </span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- 使用编译后的 JavaScript 文件 -->
+  <script src="../../dist/renderer/js/cjs-shim.js"></script>
+  <script src="../../dist/renderer/js/app.js"></script>
+  <script src="../../dist/renderer/js/chart.js"></script>
+  <script src="../../dist/renderer/js/controller.js"></script>
+</body>
+
 </html>

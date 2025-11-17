@@ -3,27 +3,31 @@
  * 负责协调View和Model之间的交互
  */
 
-import type {MonitoringData} from '../../types/global';
+import type { MonitoringData, ProcessInfo } from "../../types/global";
 
 export class AppController {
   private uiManager: any;
   private chartManager: any;
   private isMonitoring: boolean;
   private updateInterval: number;
-  private mockInterval: number|null;
+  private mockInterval: number | null;
+  private processInterval: number | null;
+  private processUpdateInterval: number;
 
   constructor() {
     this.uiManager = new (window as any).UIManager();
-    this.chartManager = new (window as any).ChartManager('monitorChart');
+    this.chartManager = new (window as any).ChartManager("monitorChart");
     this.isMonitoring = false;
     this.updateInterval = 1000;
     this.mockInterval = null;
+    this.processInterval = null;
+    this.processUpdateInterval = 5000;
 
     this.init();
   }
 
   async init(): Promise<void> {
-    console.log('🚀 初始化应用控制器...');
+    console.log("🚀 初始化应用控制器...");
 
     // 绑定按钮事件
     this.bindEvents();
@@ -34,19 +38,23 @@ export class AppController {
     // 初始数据加载
     await this.loadInitialData();
 
-    console.log('✅ 应用控制器初始化完成');
+    // 加载进程列表并开始轮询
+    await this.loadProcessList();
+    this.startProcessPolling();
+
+    console.log("✅ 应用控制器初始化完成");
   }
 
   bindEvents(): void {
-    const startBtn = document.getElementById('startBtn');
-    const stopBtn = document.getElementById('stopBtn');
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
 
     if (startBtn) {
-      startBtn.addEventListener('click', () => this.startMonitoring());
+      startBtn.addEventListener("click", () => this.startMonitoring());
     }
 
     if (stopBtn) {
-      stopBtn.addEventListener('click', () => this.stopMonitoring());
+      stopBtn.addEventListener("click", () => this.stopMonitoring());
     }
 
     // 监听来自主进程的数据
@@ -57,34 +65,38 @@ export class AppController {
     }
 
     // 窗口大小改变时重新设置canvas
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       if (this.chartManager) {
         this.chartManager.setupCanvas();
       }
+    });
+
+    window.addEventListener("beforeunload", () => {
+      this.cleanup();
     });
   }
 
   async loadSystemInfo(): Promise<void> {
     try {
       if (!window.electronAPI) {
-        console.warn('⚠️ Electron API 不可用');
+        console.warn("⚠️ Electron API 不可用");
         return;
       }
 
       const info = await window.electronAPI.getSystemInfo();
-      console.log('📊 系统信息:', info);
+      console.log("📊 系统信息:", info);
       this.uiManager.updateSystemInfo(info);
-      this.uiManager.updateStatus('就绪', info.uptime);
+      this.uiManager.updateStatus("就绪", info.uptime);
     } catch (error) {
-      console.error('❌ 加载系统信息失败:', error);
-      this.uiManager.showError('无法加载系统信息');
+      console.error("❌ 加载系统信息失败:", error);
+      this.uiManager.showError("无法加载系统信息");
     }
   }
 
   async loadInitialData(): Promise<void> {
     try {
       if (!window.electronAPI) {
-        console.warn('⚠️ Electron API 不可用，使用模拟数据');
+        console.warn("⚠️ Electron API 不可用，使用模拟数据");
         this.loadMockData();
         return;
       }
@@ -101,25 +113,26 @@ export class AppController {
       this.uiManager.updateMemory(memory);
       this.uiManager.updateDisk(disk);
       this.uiManager.updateNetwork(network);
+      this.uiManager.updateProcessList(this.generateMockProcesses());
 
-      console.log('✅ 初始数据加载完成');
+      console.log("✅ 初始数据加载完成");
     } catch (error) {
-      console.error('❌ 加载初始数据失败:', error);
-      this.uiManager.showError('无法加载监控数据');
+      console.error("❌ 加载初始数据失败:", error);
+      this.uiManager.showError("无法加载监控数据");
     }
   }
 
   async startMonitoring(): Promise<void> {
     if (this.isMonitoring) {
-      console.log('⚠️ 监控已在运行');
+      console.log("⚠️ 监控已在运行");
       return;
     }
 
     try {
-      console.log('▶️ 开始监控...');
+      console.log("▶️ 开始监控...");
 
       if (!window.electronAPI) {
-        console.warn('⚠️ Electron API 不可用，使用模拟监控');
+        console.warn("⚠️ Electron API 不可用，使用模拟监控");
         this.startMockMonitoring();
         return;
       }
@@ -127,29 +140,29 @@ export class AppController {
       await window.electronAPI.startMonitoring(this.updateInterval);
 
       this.isMonitoring = true;
-      this.uiManager.updateStatus('监控中...', null);
+      this.uiManager.updateStatus("监控中...", null);
 
       // 切换按钮
-      const startBtn = document.getElementById('startBtn');
-      const stopBtn = document.getElementById('stopBtn');
-      if (startBtn) startBtn.style.display = 'none';
-      if (stopBtn) stopBtn.style.display = 'flex';
+      const startBtn = document.getElementById("startBtn");
+      const stopBtn = document.getElementById("stopBtn");
+      if (startBtn) startBtn.style.display = "none";
+      if (stopBtn) stopBtn.style.display = "flex";
 
-      console.log('✅ 监控已启动');
+      console.log("✅ 监控已启动");
     } catch (error) {
-      console.error('❌ 启动监控失败:', error);
-      this.uiManager.showError('无法启动监控');
+      console.error("❌ 启动监控失败:", error);
+      this.uiManager.showError("无法启动监控");
     }
   }
 
   async stopMonitoring(): Promise<void> {
     if (!this.isMonitoring) {
-      console.log('⚠️ 监控未运行');
+      console.log("⚠️ 监控未运行");
       return;
     }
 
     try {
-      console.log('⏸️ 停止监控...');
+      console.log("⏸️ 停止监控...");
 
       if (this.mockInterval) {
         clearInterval(this.mockInterval);
@@ -161,18 +174,18 @@ export class AppController {
       }
 
       this.isMonitoring = false;
-      this.uiManager.updateStatus('已停止', null);
+      this.uiManager.updateStatus("已停止", null);
 
       // 切换按钮
-      const startBtn = document.getElementById('startBtn');
-      const stopBtn = document.getElementById('stopBtn');
-      if (startBtn) startBtn.style.display = 'flex';
-      if (stopBtn) stopBtn.style.display = 'none';
+      const startBtn = document.getElementById("startBtn");
+      const stopBtn = document.getElementById("stopBtn");
+      if (startBtn) startBtn.style.display = "flex";
+      if (stopBtn) stopBtn.style.display = "none";
 
-      console.log('✅ 监控已停止');
+      console.log("✅ 监控已停止");
     } catch (error) {
-      console.error('❌ 停止监控失败:', error);
-      this.uiManager.showError('无法停止监控');
+      console.error("❌ 停止监控失败:", error);
+      this.uiManager.showError("无法停止监控");
     }
   }
 
@@ -187,7 +200,47 @@ export class AppController {
       // 更新图表
       this.chartManager.addData(data.cpu.usage, data.memory.usagePercent);
     } catch (error) {
-      console.error('❌ 处理监控数据失败:', error);
+      console.error("❌ 处理监控数据失败:", error);
+    }
+  }
+
+  private async loadProcessList(): Promise<void> {
+    try {
+      if (!window.electronAPI || !window.electronAPI.getProcessList) {
+        this.uiManager.updateProcessList(this.generateMockProcesses());
+        return;
+      }
+
+      const processes = await window.electronAPI.getProcessList();
+      this.uiManager.updateProcessList(processes);
+    } catch (error) {
+      console.error("❌ 加载进程列表失败:", error);
+    }
+  }
+
+  private startProcessPolling(): void {
+    if (this.processInterval) {
+      return;
+    }
+
+    this.processInterval = window.setInterval(() => {
+      void this.loadProcessList();
+    }, this.processUpdateInterval);
+  }
+
+  private stopProcessPolling(): void {
+    if (this.processInterval) {
+      clearInterval(this.processInterval);
+      this.processInterval = null;
+    }
+  }
+
+  private cleanup(): void {
+    this.stopProcessPolling();
+
+    if (this.mockInterval) {
+      clearInterval(this.mockInterval);
+      this.mockInterval = null;
     }
   }
 
@@ -195,7 +248,7 @@ export class AppController {
     const mockCPU = {
       usage: Math.random() * 100,
       cores: 8,
-      model: 'Intel Core i7',
+      model: "Intel Core i7",
       speed: 3600,
       temperature: 45,
     };
@@ -210,7 +263,7 @@ export class AppController {
     const mockDisk = {
       disks: [
         {
-          name: '/dev/sda1',
+          name: "/dev/sda1",
           total: 500 * 1024 * 1024 * 1024,
           used: 250 * 1024 * 1024 * 1024,
           free: 250 * 1024 * 1024 * 1024,
@@ -222,9 +275,9 @@ export class AppController {
     const mockNetwork = {
       interfaces: [
         {
-          name: 'eth0',
-          ip: '192.168.1.100',
-          mac: '00:11:22:33:44:55',
+          name: "eth0",
+          ip: "192.168.1.100",
+          mac: "00:11:22:33:44:55",
           rxBytes: 1024 * 1024,
           txBytes: 512 * 1024,
           rxSpeed: 1024,
@@ -237,16 +290,17 @@ export class AppController {
     this.uiManager.updateMemory(mockMemory);
     this.uiManager.updateDisk(mockDisk);
     this.uiManager.updateNetwork(mockNetwork);
+    this.uiManager.updateProcessList(this.generateMockProcesses());
   }
 
   private startMockMonitoring(): void {
     this.isMonitoring = true;
-    this.uiManager.updateStatus('监控中... (模拟)', null);
+    this.uiManager.updateStatus("监控中... (模拟)", null);
 
-    const startBtn = document.getElementById('startBtn');
-    const stopBtn = document.getElementById('stopBtn');
-    if (startBtn) startBtn.style.display = 'none';
-    if (stopBtn) stopBtn.style.display = 'flex';
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    if (startBtn) startBtn.style.display = "none";
+    if (stopBtn) stopBtn.style.display = "flex";
 
     this.mockInterval = window.setInterval(() => {
       const mockData: MonitoringData = {
@@ -254,7 +308,7 @@ export class AppController {
         cpu: {
           usage: 20 + Math.random() * 60,
           cores: 8,
-          model: 'Intel Core i7',
+          model: "Intel Core i7",
           speed: 3600,
           temperature: 45 + Math.random() * 10,
         },
@@ -267,7 +321,7 @@ export class AppController {
         disk: {
           disks: [
             {
-              name: '/dev/sda1',
+              name: "/dev/sda1",
               total: 500 * 1024 * 1024 * 1024,
               used: 250 * 1024 * 1024 * 1024,
               free: 250 * 1024 * 1024 * 1024,
@@ -278,9 +332,9 @@ export class AppController {
         network: {
           interfaces: [
             {
-              name: 'eth0',
-              ip: '192.168.1.100',
-              mac: '00:11:22:33:44:55',
+              name: "eth0",
+              ip: "192.168.1.100",
+              mac: "00:11:22:33:44:55",
               rxBytes: 1024 * 1024,
               txBytes: 512 * 1024,
               rxSpeed: Math.random() * 10240,
@@ -291,11 +345,27 @@ export class AppController {
       };
 
       this.handleMonitoringData(mockData);
+      this.uiManager.updateProcessList(this.generateMockProcesses());
     }, this.updateInterval);
+  }
+
+  private generateMockProcesses(): ProcessInfo[] {
+    const processes: ProcessInfo[] = [];
+
+    for (let i = 0; i < 12; i++) {
+      processes.push({
+        pid: 1000 + i,
+        name: `mock-process-${i}`,
+        cpu: Math.random() * 25,
+        memory: (50 + Math.random() * 400) * 1024 * 1024,
+      });
+    }
+
+    return processes;
   }
 }
 
 // 在DOM加载完成后初始化
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   new AppController();
 });
