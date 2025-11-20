@@ -68,6 +68,12 @@ export interface ProcessInfo {
   memory: number;
 }
 
+export interface AIAnalysisResult {
+  success: boolean;
+  analysis?: string;
+  error?: string;
+}
+
 export interface ElectronAPI {
   getSystemInfo: () => Promise<SystemInfo>;
   getCPUInfo: () => Promise<CPUInfo>;
@@ -79,6 +85,8 @@ export interface ElectronAPI {
   stopMonitoring: () => Promise<{success: boolean}>;
   onMonitoringData: (callback: (data: MonitoringData) => void) => void;
   removeMonitoringListener: () => void;
+  analyzeSystemPerformance:
+      (apiKey: string, data: MonitoringData) => Promise<AIAnalysisResult>;
 }
 
 declare global {

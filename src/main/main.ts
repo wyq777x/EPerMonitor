@@ -1,4 +1,5 @@
 import {app, BrowserWindow, ipcMain, IpcMainInvokeEvent} from 'electron';
+import OpenAI from 'openai';
 import * as path from 'path';
 
 import {SystemMonitor} from './ipc/systemMonitor';
@@ -132,6 +133,79 @@ function setupIPC(): void {
       };
     }
   });
+
+  // AI 分析系统性能
+  ipcMain.handle(
+      'analyze-system-performance',
+      async (_event: IpcMainInvokeEvent, apiKey: string, data: any) => {
+        try {
+          const openai = new OpenAI({
+            baseURL: 'https://api.deepseek.com',
+            apiKey: apiKey,
+          });
+
+          // 构建性能数据摘要
+          const performanceSummary = `
+系统性能数据:
+- CPU使用率: ${data.cpu.usage.toFixed(2)}%
+- CPU核心数: ${data.cpu.cores}
+- CPU型号: ${data.cpu.model}
+- CPU温度: ${data.cpu.temperature.toFixed(2)}°C
+
+- 内存总量: ${(data.memory.total / 1024 / 1024 / 1024).toFixed(2)} GB
+- 内存已用: ${(data.memory.used / 1024 / 1024 / 1024).toFixed(2)} GB
+- 内存空闲: ${(data.memory.free / 1024 / 1024 / 1024).toFixed(2)} GB
+- 内存使用率: ${data.memory.usagePercent.toFixed(2)}%
+
+- 磁盘信息: ${
+              data.disk.disks
+                  .map(
+                      (d: any) => `${d.name}: ${
+                          (d.used / 1024 / 1024 / 1024).toFixed(2)}GB / ${
+                          (d.total / 1024 / 1024 / 1024).toFixed(2)}GB (${
+                          d.usagePercent.toFixed(2)}%)`)
+                  .join(', ')}
+
+- 网络接口: ${
+              data.network.interfaces
+                  .map(
+                      (n: any) => `${n.name}: 下载速度 ${
+                          (n.rxSpeed / 1024).toFixed(2)} KB/s, 上传速度 ${
+                          (n.txSpeed / 1024).toFixed(2)} KB/s`)
+                  .join(', ')}
+`;
+
+          const completion = await openai.chat.completions.create({
+            messages: [
+              {
+                role: 'system',
+                content:
+                    '你是一个专业的系统性能分析专家。请根据提供的系统监控数据,分析系统性能状况,指出潜在问题,并给出优化建议。请用中文回答,保持专业和简洁。',
+              },
+              {
+                role: 'user',
+                content: `请分析以下系统性能数据:\n\n${performanceSummary}`,
+              },
+            ],
+            model: 'deepseek-chat',
+          });
+
+          const analysis =
+              completion.choices[0]?.message?.content || '分析失败';
+
+          return {
+            success: true,
+            analysis: analysis,
+          };
+        } catch (error) {
+          console.error('AI分析失败:', error);
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : String(error),
+          };
+        }
+      },
+  );
 }
 
 /**

@@ -46,4 +46,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   removeMonitoringListener: (): void => {
     ipcRenderer.removeAllListeners('monitoring-data');
   },
+
+  // AI 分析系统性能
+  analyzeSystemPerformance: (apiKey: string, data: any): Promise<any> =>
+      ipcRenderer.invoke('analyze-system-performance', apiKey, data),
 });
