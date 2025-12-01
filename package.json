@@ -4,16 +4,19 @@
   "description": "高性能系统监视器 - Electron + C++ + TypeScript",
   "main": "dist/main/main.js",
   "scripts": {
-    "start": "npm run build:ts && electron .",
-    "dev": "npm run build:ts && electron . --dev",
-    "build": "npm run build:cpp && npm run build:ts && npm run build:electron",
-    "build:ts": "tsc && node scripts/copy-assets.js",
+    "start": "npm run build:cpp && npm run build:main && electron .",
+    "dev": "npm run build:cpp && concurrently \"npm run dev:renderer\" \"npm run dev:main\"",
+    "dev:renderer": "vite",
+    "dev:main": "tsc --project tsconfig.main.json && electron . --dev",
+    "build": "npm run build:cpp && npm run build:main && npm run build:renderer && npm run build:electron",
+    "build:main": "tsc --project tsconfig.main.json",
+    "build:renderer": "vite build",
     "build:cpp": "cd backend && node-gyp configure && node-gyp build",
     "build:electron": "electron-builder",
     "build:linux": "electron-builder --linux",
     "build:windows": "electron-builder --win",
     "build:mac": "electron-builder --mac",
-    "watch": "tsc --watch",
+    "preview": "vite preview",
     "clean": "node scripts/clean.js",
     "postinstall": "npm run build:cpp",
     "release": "standard-version",
@@ -32,16 +35,25 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.10.0",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "@vue/tsconfig": "^0.5.0",
+    "concurrently": "^8.2.0",
     "electron": "^28.0.0",
     "electron-builder": "^24.9.1",
     "node-gyp": "^11.5.0",
     "prettier": "^3.6.2",
+    "sass": "^1.70.0",
     "standard-version": "^9.5.0",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.0",
+    "vite": "^5.0.0",
+    "vite-plugin-electron": "^0.28.0",
+    "vue-tsc": "^1.8.0"
   },
   "dependencies": {
+    "ant-design-vue": "^4.1.0",
     "node-addon-api": "^7.0.0",
-    "openai": "^6.9.1"
+    "openai": "^6.9.1",
+    "vue": "^3.4.0"
   },
   "build": {
     "appId": "com.epm.better",
