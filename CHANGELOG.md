@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/wyq777x/EPerMonitor/compare/v2.0.0...v3.0.0) (2025-12-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* project now refactored with Vue & Ant-Design
+
+* project now refactored with Vue & Ant-Design ([1fd7738](https://github.com/wyq777x/EPerMonitor/commit/1fd77386de6705acb1b63b0972bc6324947c2e35))
+
 ## 2.0.0 (2025-11-20)
 
 
