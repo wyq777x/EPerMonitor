@@ -2,51 +2,49 @@
   <div class="card glass-card">
     <div class="card-header">
       <h2 class="card-title">
-        <span class="icon">💾</span>
+        <database-outlined style="font-size: 20px;" />
         内存使用
       </h2>
       <div class="card-actions">
-        <span class="badge" :style="badgeStyle">{{ usage }}%</span>
+        <a-tag :color="getStatusColor(usage)">{{ usage }}%</a-tag>
       </div>
     </div>
     <div class="card-body">
-      <div class="progress-ring">
-        <svg width="120" height="120">
-          <circle class="progress-ring-circle-bg" cx="60" cy="60" r="52" />
-          <circle
-            class="progress-ring-circle"
-            cx="60"
-            cy="60"
-            r="52"
-            :style="circleStyle"
+      <div class="progress-container">
+        <a-progress
+          type="circle"
+          :percent="usage"
+          :width="120"
+          :stroke-color="getProgressColor(usage)"
+          :trail-color="'rgba(255, 255, 255, 0.1)'"
+        />
+      </div>
+      <a-row :gutter="[16, 16]" class="stats-grid">
+        <a-col :span="12">
+          <a-statistic title="总计" :value="formatBytes(memoryInfo?.total || 0)" />
+        </a-col>
+        <a-col :span="12">
+          <a-statistic title="已用" :value="formatBytes(memoryInfo?.used || 0)" />
+        </a-col>
+        <a-col :span="12">
+          <a-statistic title="可用" :value="formatBytes(memoryInfo?.free || 0)" />
+        </a-col>
+        <a-col :span="12">
+          <a-statistic 
+            title="使用率" 
+            :value="usagePercent" 
+            suffix="%"
+            :value-style="{ color: getProgressColor(usage) }"
           />
-          <text x="60" y="60" class="progress-text">{{ usage }}%</text>
-        </svg>
-      </div>
-      <div class="info-grid">
-        <div class="info-item">
-          <span class="info-label">总计</span>
-          <span class="info-value">{{ formatBytes(memoryInfo?.total || 0) }}</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label">已用</span>
-          <span class="info-value">{{ formatBytes(memoryInfo?.used || 0) }}</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label">可用</span>
-          <span class="info-value">{{ formatBytes(memoryInfo?.free || 0) }}</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label">使用率</span>
-          <span class="info-value">{{ usagePercent }}%</span>
-        </div>
-      </div>
+        </a-col>
+      </a-row>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { DatabaseOutlined } from '@ant-design/icons-vue';
 import type { MemoryInfo } from '../../types/global';
 import { formatBytes } from '../utils/format';
 
@@ -57,29 +55,89 @@ const props = defineProps<{
 const usage = computed(() => Math.round(props.memoryInfo?.usagePercent ?? 0));
 const usagePercent = computed(() => (props.memoryInfo?.usagePercent ?? 0).toFixed(1));
 
-const circleStyle = computed(() => {
-  const percent = usage.value;
-  const radius = 52;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (percent / 100) * circumference;
+const getStatusColor = (percent: number) => {
+  if (percent >= 80) return 'red';
+  if (percent >= 50) return 'orange';
+  return 'green';
+};
 
-  let color = '#43e97b';
-  if (percent >= 80) color = '#f5576c';
-  else if (percent >= 50) color = '#fee140';
-
-  return {
-    strokeDashoffset: offset.toString(),
-    stroke: color
-  };
-});
-
-const badgeStyle = computed(() => {
-  const percent = usage.value;
-  const background = percent > 80 ? 'var(--gradient-2)' : 'var(--gradient-3)';
-  return { background };
-});
+const getProgressColor = (percent: number) => {
+  if (percent >= 80) return '#f5576c';
+  if (percent >= 50) return '#fee140';
+  return '#43e97b';
+};
 </script>
 
 <style scoped>
-/* Memory Monitor 特定样式 */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--glass-shadow);
+  transition: var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.card-header {
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin: 0;
+}
+
+.card-body {
+  padding: var(--spacing-lg);
+}
+
+.progress-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.stats-grid {
+  margin-top: var(--spacing-md);
+}
+
+/* Ant Design 统计组件样式覆盖 */
+.card-body :deep(.ant-statistic) {
+  text-align: center;
+}
+
+.card-body :deep(.ant-statistic-title) {
+  color: var(--text-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-body :deep(.ant-statistic-content) {
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Progress 样式 */
+.card-body :deep(.ant-progress-text) {
+  color: var(--text-primary);
+  font-weight: 700;
+}
 </style>

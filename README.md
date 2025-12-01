@@ -272,7 +272,7 @@ npm run dev
 
 这将:
 1. 编译 C++ 后端模块
-2. 启动 Vite 开发服务器 (端口 5173)
+2. 启动 Vite 开发服务器 (端口 12304)
 3. 编译主进程 TypeScript
 4. 启动 Electron 窗口
 

@@ -91,6 +91,80 @@ body {
   line-height: 1.6;
 }
 
+/* ==================== Ant Design 全局样式覆盖 ==================== */
+/* 下拉菜单 */
+.ant-select-dropdown,
+.ant-picker-dropdown,
+.ant-dropdown-menu {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: var(--glass-shadow) !important;
+}
+
+.ant-select-item {
+  color: var(--text-primary) !important;
+}
+
+.ant-select-item:hover,
+.ant-select-item-option-active {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.ant-select-item-option-selected {
+  background: var(--gradient-1) !important;
+  color: white !important;
+}
+
+/* 分页器 */
+.ant-pagination-item:hover,
+.ant-pagination-prev:hover .ant-pagination-item-link,
+.ant-pagination-next:hover .ant-pagination-item-link {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Tag 组件 */
+.ant-tag {
+  border-radius: var(--radius-sm);
+}
+
+/* 输入框 */
+.ant-input:focus,
+.ant-input-focused {
+  border-color: rgba(102, 126, 234, 0.6) !important;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2) !important;
+}
+
+/* 按钮 hover 状态 */
+.ant-btn:active {
+  transform: translateY(0) !important;
+}
+
+/* Tooltip */
+.ant-tooltip-inner {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+}
+
+.ant-tooltip-arrow-content {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+}
+
+/* Empty 组件 */
+.ant-empty-image svg {
+  fill: var(--text-muted);
+}
+
+/* Progress 组件 */
+.ant-progress-circle .ant-progress-text {
+  fill: var(--text-primary) !important;
+}
+
 /* ==================== 应用容器 ==================== */
 .app-container {
   position: relative;

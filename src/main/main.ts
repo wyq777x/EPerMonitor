@@ -1,10 +1,10 @@
-import {app, BrowserWindow, ipcMain, IpcMainInvokeEvent} from 'electron';
-import OpenAI from 'openai';
-import * as path from 'path';
+import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent } from "electron";
+import OpenAI from "openai";
+import * as path from "path";
 
-import {SystemMonitor} from './ipc/systemMonitor';
+import { SystemMonitor } from "./ipc/systemMonitor";
 
-let mainWindow: BrowserWindow|null;
+let mainWindow: BrowserWindow | null;
 let systemMonitor: SystemMonitor;
 
 /**
@@ -18,29 +18,33 @@ function createWindow(): void {
     minHeight: 600,
     frame: true,
     transparent: false,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: "#1a1a2e",
     webPreferences: {
-      preload: path.join(__dirname, '../preload.js'),
+      preload: path.join(__dirname, "../preload.js"),
       nodeIntegration: false,
       contextIsolation: true,
     },
-    icon: path.join(__dirname, '../../assets/icon.png'),
+    icon: path.join(__dirname, "../../assets/icon.png"),
   });
 
   // 加载应用
-  const isDev = process.argv.includes('--dev');
-  const indexPath = isDev ?
-      path.join(__dirname, '../../src/renderer/index.html') :
-      path.join(__dirname, '../renderer/index.html');
+  const isDev = process.argv.includes("--dev");
 
-  mainWindow.loadFile(indexPath);
+  if (isDev) {
+    // 开发模式：加载 Vite 开发服务器
+    mainWindow.loadURL("http://localhost:12304");
+  } else {
+    // 生产模式：加载打包后的文件
+    const indexPath = path.join(__dirname, "../renderer/index.html");
+    mainWindow.loadFile(indexPath);
+  }
 
   // 开发模式下打开开发者工具
   if (isDev) {
     mainWindow.webContents.openDevTools();
   }
 
-  mainWindow.on('closed', () => {
+  mainWindow.on("closed", () => {
     mainWindow = null;
   });
 }
@@ -55,7 +59,7 @@ app.whenReady().then(() => {
   systemMonitor = new SystemMonitor();
   setupIPC();
 
-  app.on('activate', () => {
+  app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
     }
@@ -65,8 +69,8 @@ app.whenReady().then(() => {
 /**
  * 所有窗口关闭时退出
  */
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
     if (systemMonitor) {
       systemMonitor.stop();
     }
@@ -79,53 +83,53 @@ app.on('window-all-closed', () => {
  */
 function setupIPC(): void {
   // 获取系统信息
-  ipcMain.handle('get-system-info', async () => {
+  ipcMain.handle("get-system-info", async () => {
     return systemMonitor.getSystemInfo();
   });
 
   // 获取CPU信息
-  ipcMain.handle('get-cpu-info', async () => {
+  ipcMain.handle("get-cpu-info", async () => {
     return systemMonitor.getCPUInfo();
   });
 
   // 获取内存信息
-  ipcMain.handle('get-memory-info', async () => {
+  ipcMain.handle("get-memory-info", async () => {
     return systemMonitor.getMemoryInfo();
   });
 
   // 获取磁盘信息
-  ipcMain.handle('get-disk-info', async () => {
+  ipcMain.handle("get-disk-info", async () => {
     return systemMonitor.getDiskInfo();
   });
 
   // 获取网络信息
-  ipcMain.handle('get-network-info', async () => {
+  ipcMain.handle("get-network-info", async () => {
     return systemMonitor.getNetworkInfo();
   });
 
   // 获取进程列表
-  ipcMain.handle('get-process-list', async () => {
+  ipcMain.handle("get-process-list", async () => {
     return systemMonitor.getProcessList();
   });
 
   // 开始监控
   ipcMain.handle(
-      'start-monitoring',
-      async (_event: IpcMainInvokeEvent, interval?: number) => {
-        systemMonitor.startMonitoring(interval || 1000, (data) => {
-          if (mainWindow && !mainWindow.isDestroyed()) {
-            mainWindow.webContents.send('monitoring-data', data);
-          }
-        });
-        return {success: true};
-      },
+    "start-monitoring",
+    async (_event: IpcMainInvokeEvent, interval?: number) => {
+      systemMonitor.startMonitoring(interval || 1000, (data) => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          mainWindow.webContents.send("monitoring-data", data);
+        }
+      });
+      return { success: true };
+    }
   );
 
   // 停止监控
-  ipcMain.handle('stop-monitoring', async () => {
+  ipcMain.handle("stop-monitoring", async () => {
     try {
       systemMonitor.stopMonitoring();
-      return {success: true};
+      return { success: true };
     } catch (error) {
       return {
         success: false,
@@ -136,16 +140,16 @@ function setupIPC(): void {
 
   // AI 分析系统性能
   ipcMain.handle(
-      'analyze-system-performance',
-      async (_event: IpcMainInvokeEvent, apiKey: string, data: any) => {
-        try {
-          const openai = new OpenAI({
-            baseURL: 'https://api.deepseek.com',
-            apiKey: apiKey,
-          });
+    "analyze-system-performance",
+    async (_event: IpcMainInvokeEvent, apiKey: string, data: any) => {
+      try {
+        const openai = new OpenAI({
+          baseURL: "https://api.deepseek.com",
+          apiKey: apiKey,
+        });
 
-          // 构建性能数据摘要
-          const performanceSummary = `
+        // 构建性能数据摘要
+        const performanceSummary = `
 系统性能数据:
 - CPU使用率: ${data.cpu.usage.toFixed(2)}%
 - CPU核心数: ${data.cpu.cores}
@@ -157,64 +161,67 @@ function setupIPC(): void {
 - 内存空闲: ${(data.memory.free / 1024 / 1024 / 1024).toFixed(2)} GB
 - 内存使用率: ${data.memory.usagePercent.toFixed(2)}%
 
-- 磁盘信息: ${
-              data.disk.disks
-                  .map(
-                      (d: any) => `${d.name}: ${
-                          (d.used / 1024 / 1024 / 1024).toFixed(2)}GB / ${
-                          (d.total / 1024 / 1024 / 1024).toFixed(2)}GB (${
-                          d.usagePercent.toFixed(2)}%)`)
-                  .join(', ')}
+- 磁盘信息: ${data.disk.disks
+          .map(
+            (d: any) =>
+              `${d.name}: ${(d.used / 1024 / 1024 / 1024).toFixed(2)}GB / ${(
+                d.total /
+                1024 /
+                1024 /
+                1024
+              ).toFixed(2)}GB (${d.usagePercent.toFixed(2)}%)`
+          )
+          .join(", ")}
 
-- 网络接口: ${
-              data.network.interfaces
-                  .map(
-                      (n: any) => `${n.name}: 下载速度 ${
-                          (n.rxSpeed / 1024).toFixed(2)} KB/s, 上传速度 ${
-                          (n.txSpeed / 1024).toFixed(2)} KB/s`)
-                  .join(', ')}
+- 网络接口: ${data.network.interfaces
+          .map(
+            (n: any) =>
+              `${n.name}: 下载速度 ${(n.rxSpeed / 1024).toFixed(
+                2
+              )} KB/s, 上传速度 ${(n.txSpeed / 1024).toFixed(2)} KB/s`
+          )
+          .join(", ")}
 `;
 
-          const completion = await openai.chat.completions.create({
-            messages: [
-              {
-                role: 'system',
-                content:
-                    '你是一个专业的系统性能分析专家。请根据提供的系统监控数据,分析系统性能状况,指出潜在问题,并给出优化建议。请用中文回答,保持专业和简洁。',
-              },
-              {
-                role: 'user',
-                content: `请分析以下系统性能数据:\n\n${performanceSummary}`,
-              },
-            ],
-            model: 'deepseek-chat',
-          });
+        const completion = await openai.chat.completions.create({
+          messages: [
+            {
+              role: "system",
+              content:
+                "你是一个专业的系统性能分析专家。请根据提供的系统监控数据,分析系统性能状况,指出潜在问题,并给出优化建议。请用中文回答,保持专业和简洁。",
+            },
+            {
+              role: "user",
+              content: `请分析以下系统性能数据:\n\n${performanceSummary}`,
+            },
+          ],
+          model: "deepseek-chat",
+        });
 
-          const analysis =
-              completion.choices[0]?.message?.content || '分析失败';
+        const analysis = completion.choices[0]?.message?.content || "分析失败";
 
-          return {
-            success: true,
-            analysis: analysis,
-          };
-        } catch (error) {
-          console.error('AI分析失败:', error);
-          return {
-            success: false,
-            error: error instanceof Error ? error.message : String(error),
-          };
-        }
-      },
+        return {
+          success: true,
+          analysis: analysis,
+        };
+      } catch (error) {
+        console.error("AI分析失败:", error);
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+    }
   );
 }
 
 /**
  * 处理未捕获的异常
  */
-process.on('uncaughtException', (error: Error) => {
-  console.error('Uncaught Exception:', error);
+process.on("uncaughtException", (error: Error) => {
+  console.error("Uncaught Exception:", error);
 });
 
-process.on('unhandledRejection', (error: Error) => {
-  console.error('Unhandled Rejection:', error);
+process.on("unhandledRejection", (error: Error) => {
+  console.error("Unhandled Rejection:", error);
 });

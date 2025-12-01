@@ -6,5 +6,8 @@ import "./css/style.css";
 import "./css/components.css";
 
 const app = createApp(App);
+
+// 配置 Ant Design Vue 主题
 app.use(Antd);
+
 app.mount("#app");
