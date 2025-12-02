@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.1](https://github.com/wyq777x/EPerMonitor/compare/v1.5.1...v3.1.1) (2025-12-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* project now refactored with Vue & Ant-Design
+
+### Features
+
+* add AI(Deepseek) Performance Analyzing and integrate OpenAI API ([b9b9d5a](https://github.com/wyq777x/EPerMonitor/commit/b9b9d5a81752fbd9483194add5269ad2d2d9ce71))
+
+
+### Bug Fixes
+
+* some known bugs ([deff4c6](https://github.com/wyq777x/EPerMonitor/commit/deff4c6aadf5cfec73ba7ac831c59d0f2a14fa60))
+
+
+* project now refactored with Vue & Ant-Design ([1fd7738](https://github.com/wyq777x/EPerMonitor/commit/1fd77386de6705acb1b63b0972bc6324947c2e35))
+
 ## [3.1.0](https://github.com/wyq777x/EPerMonitor/compare/v3.0.0...v3.1.0) (2025-12-01)
 
 ## [3.0.0](https://github.com/wyq777x/EPerMonitor/compare/v2.0.0...v3.0.0) (2025-12-01)
