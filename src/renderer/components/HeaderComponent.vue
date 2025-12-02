@@ -47,12 +47,14 @@
             v-if="isMonitoring" 
             type="primary"
             size="large"
+            :loading="isAnalyzing"
             style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border: none;"
+            @click="$emit('ai-analyze')"
           >
             <template #icon>
               <robot-outlined />
             </template>
-            AI分析
+            {{ isAnalyzing ? '分析中...' : 'AI分析' }}
           </a-button>
         </a-space>
       </div>
@@ -67,11 +69,13 @@ import type { SystemInfo } from '../../types/global';
 defineProps<{
   systemInfo: SystemInfo | null;
   isMonitoring: boolean;
+  isAnalyzing: boolean;
 }>();
 
 defineEmits<{
   (e: 'start-monitoring'): void;
   (e: 'stop-monitoring'): void;
+  (e: 'ai-analyze'): void;
 }>();
 </script>
 

@@ -29,9 +29,9 @@
             </a-tooltip>
           </template>
           <template v-else-if="column.key === 'cpu'">
-            <a-tag :color="getCpuColor(record.cpu)">
+            <span class="cpu-tag" :style="getCpuTagStyle(record.cpu)">
               {{ (record.cpu || 0).toFixed(1) }}%
-            </a-tag>
+            </span>
           </template>
           <template v-else-if="column.key === 'memory'">
             <span>{{ formatBytes(record.memory || 0) }}</span>
@@ -103,11 +103,11 @@ const filteredProcesses = computed(() => {
   );
 });
 
-const getCpuColor = (cpu: number | undefined) => {
-  if (!cpu) return 'default';
-  if (cpu >= 50) return 'red';
-  if (cpu >= 20) return 'orange';
-  return 'green';
+const getCpuTagStyle = (cpu: number | undefined) => {
+  if (!cpu) return { background: 'rgba(255, 255, 255, 0.1)', border: '1px solid rgba(255, 255, 255, 0.2)', color: 'rgba(255, 255, 255, 0.7)' };
+  if (cpu >= 50) return { background: 'rgba(245, 87, 108, 0.2)', border: '1px solid rgba(245, 87, 108, 0.4)', color: '#f5576c' };
+  if (cpu >= 20) return { background: 'rgba(255, 170, 0, 0.2)', border: '1px solid rgba(255, 170, 0, 0.4)', color: '#ffaa00' };
+  return { background: 'rgba(67, 233, 123, 0.2)', border: '1px solid rgba(67, 233, 123, 0.4)', color: '#43e97b' };
 };
 </script>
 
@@ -162,6 +162,14 @@ const getCpuColor = (cpu: number | undefined) => {
   white-space: nowrap;
 }
 
+.cpu-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
 /* Ant Design Table 样式覆盖 */
 .card-body :deep(.ant-table) {
   background: transparent;
@@ -169,24 +177,41 @@ const getCpuColor = (cpu: number | undefined) => {
 }
 
 .card-body :deep(.ant-table-thead > tr > th) {
-  background: var(--glass-bg);
+  background: var(--glass-bg) !important;
   color: var(--text-primary);
   border-bottom: 1px solid var(--glass-border);
   font-weight: 600;
 }
 
+.card-body :deep(.ant-table-thead > tr > th:hover) {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
 .card-body :deep(.ant-table-tbody > tr) {
-  background: transparent;
+  background: transparent !important;
   transition: var(--transition);
 }
 
 .card-body :deep(.ant-table-tbody > tr:hover) {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.card-body :deep(.ant-table-tbody > tr:hover > td) {
+  background: transparent !important;
 }
 
 .card-body :deep(.ant-table-tbody > tr > td) {
   border-bottom: 1px solid var(--glass-border);
   color: var(--text-secondary);
+  background: transparent !important;
+}
+
+.card-body :deep(.ant-table-tbody > tr.ant-table-row:hover > td) {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.card-body :deep(.ant-table-cell-row-hover) {
+  background: rgba(255, 255, 255, 0.05) !important;
 }
 
 .card-body :deep(.ant-pagination) {

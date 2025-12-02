@@ -11,8 +11,10 @@
     <HeaderComponent
       :system-info="systemInfo"
       :is-monitoring="isMonitoring"
+      :is-analyzing="isAnalyzing"
       @start-monitoring="startMonitoring"
       @stop-monitoring="stopMonitoring"
+      @ai-analyze="analyzeWithAI"
     />
 
     <!-- 主内容区 -->
@@ -58,6 +60,7 @@ import FooterComponent from './components/FooterComponent.vue';
 
 const {
   isMonitoring,
+  isAnalyzing,
   systemInfo,
   cpuInfo,
   memoryInfo,
@@ -67,7 +70,8 @@ const {
   status,
   uptime,
   startMonitoring,
-  stopMonitoring
+  stopMonitoring,
+  analyzeWithAI
 } = useMonitor();
 
 // 监听 CPU 和内存数据的变化
