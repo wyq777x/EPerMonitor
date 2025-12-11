@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.2](https://github.com/wyq777x/EPerMonitor/compare/v3.1.1...v3.1.2) (2025-12-11)
+
+
+### Bug Fixes
+
+* Improve tag styling and correct tag colors ([2b970d2](https://github.com/wyq777x/EPerMonitor/commit/2b970d23a67cd956c25e6e3b53ede191ceebac81))
+
 ### [3.1.1](https://github.com/wyq777x/EPerMonitor/compare/v1.5.1...v3.1.1) (2025-12-02)
 
 
