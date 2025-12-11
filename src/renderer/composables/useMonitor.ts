@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, toRaw } from "vue";
 import { Modal, message } from "ant-design-vue";
 import { h } from "vue";
 import type {
@@ -10,6 +10,7 @@ import type {
   SystemInfo,
   MonitoringData,
 } from "../../types/global";
+import { marked } from "marked";
 
 export function useMonitor() {
   const isMonitoring = ref(false);
@@ -235,10 +236,10 @@ export function useMonitor() {
       }
 
       const monitoringData: MonitoringData = {
-        cpu: cpuInfo.value!,
-        memory: memoryInfo.value!,
-        disk: diskInfo.value!,
-        network: networkInfo.value!,
+        cpu: toRaw(cpuInfo.value!),
+        memory: toRaw(memoryInfo.value!),
+        disk: toRaw(diskInfo.value!),
+        network: toRaw(networkInfo.value!),
         timestamp: Date.now(),
       };
 
@@ -250,17 +251,14 @@ export function useMonitor() {
       if (result.success && result.analysis) {
         console.log("✅ AI分析完成");
         // 显示分析结果
+        const htmlContent = marked(result.analysis) as string;
         Modal.success({
           title: "AI 分析结果",
-          content: h(
-            "div",
-            {
-              style:
-                "max-height: 400px; overflow-y: auto; white-space: pre-wrap; line-height: 1.6;",
-            },
-            result.analysis
-          ),
-          width: 600,
+          content: h("div", {
+            style: "max-height: 400px; overflow-y: auto; line-height: 1.6;",
+            innerHTML: htmlContent,
+          }),
+          width: 700,
           centered: true,
           okText: "关闭",
         });
