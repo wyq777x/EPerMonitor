@@ -17,7 +17,7 @@
             <a-list-item-meta>
               <template #title>
                 <a-space>
-                  <a-tag color="blue">{{ item.name || '未知' }}</a-tag>
+                  <a-tag color="magenta">{{ item.name || '未知' }}</a-tag>
                   <a-tag v-if="item.ip" color="cyan">
                     <template #icon>
                       <wifi-outlined />
@@ -44,7 +44,7 @@
                     <template #label>
                       <laptop-outlined /> MAC地址
                     </template>
-                    <span style="font-family: monospace; font-size: 12px;">{{ item.mac }}</span>
+                    <span style="font-family: sans-serif; font-size: 12px;">{{ item.mac }}</span>
                   </a-descriptions-item>
                 </a-descriptions>
               </template>

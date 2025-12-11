@@ -6,7 +6,7 @@
           <span class="icon">📊</span>
           EPM Better
         </h1>
-        <a-tag v-if="systemInfo" color="blue" class="system-info-tag">
+        <a-tag v-if="systemInfo" color="magenta" class="system-info-tag">
           <template #icon>
             <desktop-outlined />
           </template>

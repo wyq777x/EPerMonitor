@@ -17,8 +17,8 @@
             <a-list-item-meta>
               <template #title>
                 <a-space>
-                  <a-tag color="purple">{{ item.name || '未知' }}</a-tag>
-                  <a-tag :color="getUsageColor(item.usagePercent || 0)">
+                  <a-tag class="disk-tag">{{ item.name || '未知' }}</a-tag>
+                  <a-tag class="disk-tag">
                     {{ Math.round(item.usagePercent || 0) }}%
                   </a-tag>
                 </a-space>
@@ -66,12 +66,6 @@ defineProps<{
 }>();
 
 const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
-
-const getUsageColor = (percent: number) => {
-  if (percent >= 80) return 'red';
-  if (percent >= 60) return 'orange';
-  return 'green';
-};
 
 const getProgressColor = (percent: number) => {
   if (percent >= 80) return '#f5576c';
@@ -182,5 +176,13 @@ const getProgressColor = (percent: number) => {
 
 .card-body :deep(.ant-empty-description) {
   color: var(--text-muted);
+}
+
+/* Tag 样式美化 */
+.card-body :deep(.disk-tag) {
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
+  backdrop-filter: blur(10px);
+  color: var(--text-primary);
 }
 </style>

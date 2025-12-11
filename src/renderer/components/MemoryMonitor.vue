@@ -6,7 +6,7 @@
         内存使用
       </h2>
       <div class="card-actions">
-        <a-tag :color="getStatusColor(usage)">{{ usage }}%</a-tag>
+        <a-tag class="stat-tag">{{ usage }}%</a-tag>
       </div>
     </div>
     <div class="card-body">
@@ -139,5 +139,20 @@ const getProgressColor = (percent: number) => {
 .card-body :deep(.ant-progress-text) {
   color: var(--text-primary);
   font-weight: 700;
+}
+
+/* Tag 样式美化 */
+.card-body :deep(.ant-tag) {
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
+  backdrop-filter: blur(10px);
+  color: var(--text-primary);
+}
+
+.card-actions :deep(.stat-tag) {
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
+  backdrop-filter: blur(10px);
+  color: var(--text-primary);
 }
 </style>

@@ -29,9 +29,9 @@
             </a-tooltip>
           </template>
           <template v-else-if="column.key === 'cpu'">
-            <span class="cpu-tag" :style="getCpuTagStyle(record.cpu)">
+            <a-tag class="process-tag">
               {{ (record.cpu || 0).toFixed(1) }}%
-            </span>
+            </a-tag>
           </template>
           <template v-else-if="column.key === 'memory'">
             <span>{{ formatBytes(record.memory || 0) }}</span>
@@ -103,12 +103,7 @@ const filteredProcesses = computed(() => {
   );
 });
 
-const getCpuTagStyle = (cpu: number | undefined) => {
-  if (!cpu) return { background: 'rgba(255, 255, 255, 0.1)', border: '1px solid rgba(255, 255, 255, 0.2)', color: 'rgba(255, 255, 255, 0.7)' };
-  if (cpu >= 50) return { background: 'rgba(245, 87, 108, 0.2)', border: '1px solid rgba(245, 87, 108, 0.4)', color: '#f5576c' };
-  if (cpu >= 20) return { background: 'rgba(255, 170, 0, 0.2)', border: '1px solid rgba(255, 170, 0, 0.4)', color: '#ffaa00' };
-  return { background: 'rgba(67, 233, 123, 0.2)', border: '1px solid rgba(67, 233, 123, 0.4)', color: '#43e97b' };
-};
+
 </script>
 
 <style scoped>
@@ -160,14 +155,6 @@ const getCpuTagStyle = (cpu: number | undefined) => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.cpu-tag {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
 }
 
 /* Ant Design Table 样式覆盖 */
@@ -246,24 +233,47 @@ const getCpuTagStyle = (cpu: number | undefined) => {
   color: var(--text-primary);
 }
 
+/* Process Tag 样式 */
+.card-body :deep(.process-tag) {
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
+  backdrop-filter: blur(10px);
+  color: var(--text-primary);
+}
+
 /* 搜索框样式 */
 .card-header :deep(.ant-input-search) {
   background: var(--glass-bg);
 }
 
 .card-header :deep(.ant-input) {
-  background: var(--glass-bg);
-  border-color: var(--glass-border);
-  color: var(--text-primary);
+  background: var(--glass-bg) !important;
+  border-color: var(--glass-border) !important;
+  color: #000000 !important;
+  caret-color: #000000 !important;
 }
 
 .card-header :deep(.ant-input::placeholder) {
   color: var(--text-muted);
 }
 
+.card-header :deep(.ant-input:focus),
+.card-header :deep(.ant-input-focused) {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.card-header :deep(.ant-input::selection) {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
 .card-header :deep(.ant-input-search-button) {
   background: var(--gradient-1);
   border: none;
+}
+
+.card-header :deep(.ant-input-clear-icon) {
+  color: var(--text-muted);
 }
 
 @media (max-width: 768px) {
