@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.4](https://github.com/wyq777x/EPerMonitor/compare/v3.1.0...v3.1.4) (2025-12-15)
+
+
+### Bug Fixes
+
+* Improve tag styling and correct tag colors ([2b970d2](https://github.com/wyq777x/EPerMonitor/commit/2b970d23a67cd956c25e6e3b53ede191ceebac81))
+* invisible text due to color contrast issue ([92128db](https://github.com/wyq777x/EPerMonitor/commit/92128db186804f738e580841510a07013bae306a))
+* some known bugs ([deff4c6](https://github.com/wyq777x/EPerMonitor/commit/deff4c6aadf5cfec73ba7ac831c59d0f2a14fa60))
+* support Markdown parsing for the display of AI analysis result ([04bf008](https://github.com/wyq777x/EPerMonitor/commit/04bf0083ff5e48cdfa07ef7e58fb362d751472d7))
+
 ### [3.1.3](https://github.com/wyq777x/EPerMonitor/compare/v3.1.2...v3.1.3) (2025-12-11)
 
 
