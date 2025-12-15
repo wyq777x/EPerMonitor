@@ -186,7 +186,7 @@ export function useMonitor() {
               type: "password",
               placeholder: "请输入您的 DeepSeek API Key",
               style:
-                "width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px; background: rgba(255,255,255,0.1); color: #fff;",
+                "width: 100%; padding: 8px 12px; border: 1px solid var(--glass-border, #d9d9d9); border-radius: 6px; background: var(--glass-bg, rgba(255,255,255,0.7)); color: #000; caret-color: #000;",
               onInput: (e: Event) => {
                 inputValue.value = (e.target as HTMLInputElement).value;
               },
